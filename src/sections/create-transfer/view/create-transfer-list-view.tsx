@@ -1,4 +1,6 @@
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+import SearchIcon from '@mui/icons-material/Search';
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import {
   Box,
   Chip,
@@ -17,13 +19,65 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useGetCreateTransferList } from 'src/query/hooks/create-transfer';
+import { CreateTransferListItem } from 'src/types/create-transfer';
 
-const PAYOUT_TYPES = ['Bank', 'Cash Pickup', 'Wallet'];
+const PAYOUT_TYPES = ['Bank Transfer', 'Mobile Money', 'Cash Pickup'];
 
 const getKycColor = (status: string) =>
   status === 'Verified'
     ? { bg: '#B9E8C9', text: '#137A3A' }
     : { bg: '#F5E9B5', text: '#9D7A00' };
+
+const MOCK_TRANSFER_ROWS: CreateTransferListItem[] = [
+  {
+    id: '1',
+    customerCode: 'C-10421',
+    customerName: 'Ahmed Hassan',
+    mobileNumber: '+201012345678',
+    country: 'Bangladesh',
+    kycStatus: 'Verified',
+  },
+  {
+    id: '2',
+    customerCode: 'C-10420',
+    customerName: 'Fatima Al-Said',
+    mobileNumber: '+639171234567',
+    country: 'South Africa',
+    kycStatus: 'Verified',
+  },
+  {
+    id: '3',
+    customerCode: 'C-10419',
+    customerName: 'Mohammed Khalid',
+    mobileNumber: '(252) 555-0126',
+    country: 'Curacao',
+    kycStatus: 'Pending',
+  },
+  {
+    id: '4',
+    customerCode: 'C-10418',
+    customerName: 'Sara Abdullah',
+    mobileNumber: '(229) 555-0109',
+    country: 'Aland Islands',
+    kycStatus: 'Verified',
+  },
+  {
+    id: '5',
+    customerCode: 'C-10417',
+    customerName: 'Omar Yusuf',
+    mobileNumber: '(808) 555-0111',
+    country: 'Iceland',
+    kycStatus: 'Verified',
+  },
+  {
+    id: '6',
+    customerCode: 'C-10416',
+    customerName: 'Layla Ibrahim',
+    mobileNumber: '(308) 555-0121',
+    country: 'Iran',
+    kycStatus: 'Verified',
+  },
+];
 
 export default function CreateTransferListView() {
   const [filters, setFilters] = useState({
@@ -32,10 +86,12 @@ export default function CreateTransferListView() {
     payoutType: '',
   });
 
-  const { data } = useGetCreateTransferList(filters);
+  // Keep hook ready for API integration; UI currently renders mock rows by design.
+  const { data } = useGetCreateTransferList(filters, false);
 
   const rows = useMemo(() => {
-    const list = data?.data?.list || [];
+    const apiRows = data?.data?.list || [];
+    const list = MOCK_TRANSFER_ROWS.length ? MOCK_TRANSFER_ROWS : apiRows;
     return list.filter((row) => {
       const customerMobileMatch = filters.customerMobileNumber
         ? row.mobileNumber.toLowerCase().includes(filters.customerMobileNumber.toLowerCase())
@@ -47,14 +103,29 @@ export default function CreateTransferListView() {
     });
   }, [data?.data?.list, filters.customerMobileNumber, filters.recipientMobileNumber]);
 
+  const inputSx = {
+    '& .MuiOutlinedInput-root': {
+      height: 44,
+      borderRadius: '8px',
+      bgcolor: '#FFFFFF',
+      '& fieldset': { borderColor: '#D0D5DD' },
+      '&:hover fieldset': { borderColor: '#D0D5DD' },
+      '&.Mui-focused fieldset': { borderColor: '#03BC00' },
+    },
+    '& .MuiInputBase-input': {
+      fontSize: 14,
+      color: '#667085',
+    },
+  };
+
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, md: 2 }, pt: 0.5 }}>
       <Stack spacing={2.5}>
         <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E' }}>Create New Transfer</Typography>
 
-        <Grid container spacing={1.5} alignItems="end">
+        <Grid container spacing={1} alignItems="end">
           <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 14, color: '#6B7280' }}>Customer Mobile Number</Typography>
+            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Customer Mobile Number</Typography>
             <TextField
               fullWidth
               size="small"
@@ -66,10 +137,11 @@ export default function CreateTransferListView() {
                   customerMobileNumber: event.target.value,
                 }))
               }
+              sx={inputSx}
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 14, color: '#6B7280' }}>Recipient Mobile Number</Typography>
+            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Recipient Mobile Number</Typography>
             <TextField
               fullWidth
               size="small"
@@ -81,10 +153,11 @@ export default function CreateTransferListView() {
                   recipientMobileNumber: event.target.value,
                 }))
               }
+              sx={inputSx}
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 14, color: '#6B7280' }}>Payout Type</Typography>
+            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Payout Type</Typography>
             <TextField
               fullWidth
               select
@@ -96,6 +169,8 @@ export default function CreateTransferListView() {
                   payoutType: event.target.value,
                 }))
               }
+              SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+              sx={inputSx}
             >
               <MenuItem value="">Choose</MenuItem>
               {PAYOUT_TYPES.map((type) => (
@@ -105,35 +180,89 @@ export default function CreateTransferListView() {
               ))}
             </TextField>
           </Grid>
+          <Grid item xs={12} md={3}>
+            <IconButton
+              sx={{
+                width: 44,
+                height: 40,
+                borderRadius: '12px',
+                bgcolor: '#03BC00',
+                color: '#FFFFFF',
+                '&:hover': { bgcolor: '#02A900' },
+              }}
+            >
+              <SearchIcon fontSize="small" />
+            </IconButton>
+          </Grid>
         </Grid>
 
-        <Typography sx={{ mt: 0.5, fontSize: 30, fontWeight: 700, color: '#191B1E' }}>Customer List</Typography>
+        <Box
+          sx={{
+            height: 16,
+            display: 'flex',
+            alignItems: 'center',
+            px: 0.75,
+            borderRadius: '10px',
+            bgcolor: '#FFFFFF',
+            mt: 1,
+          }}
+        >
+          <Typography sx={{ fontSize: 16, fontWeight: 500, color: '#191B1E' }}>Customer List</Typography>
+        </Box>
 
         <Box sx={{ overflowX: 'auto' }}>
-          <Table>
+          <Table sx={{ minWidth: 980 }}>
             <TableHead>
-              <TableRow>
-                <TableCell>Customer Code</TableCell>
-                <TableCell>Customer Name</TableCell>
-                <TableCell>Mobile Number</TableCell>
-                <TableCell>Country</TableCell>
-                <TableCell>KYC Status</TableCell>
-                <TableCell>Action</TableCell>
+              <TableRow sx={{ bgcolor: '#F9FAFB' }}>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Code</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Name</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Mobile Number</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Country</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>KYC Status</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((row) => {
                 const kycColor = getKycColor(row.kycStatus);
                 return (
-                  <TableRow key={row.id}>
+                  <TableRow
+                    key={row.id}
+                    sx={{
+                      '& td': {
+                        borderBottom: '0.74px solid #EAECF0',
+                        py: 1.6,
+                        fontSize: 14,
+                        color: '#344054',
+                      },
+                    }}
+                  >
                     <TableCell>
-                      <Chip label={row.customerCode} sx={{ bgcolor: '#E4F5E8', color: '#166534', fontWeight: 700 }} />
+                      <Chip
+                        label={row.customerCode}
+                        sx={{
+                          bgcolor: '#ECFDF3',
+                          color: '#166534',
+                          fontWeight: 600,
+                          borderRadius: '10px',
+                          height: 24,
+                        }}
+                      />
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>{row.customerName}</TableCell>
+                    <TableCell sx={{ color: '#101828 !important', fontWeight: 500 }}>{row.customerName}</TableCell>
                     <TableCell>{row.mobileNumber}</TableCell>
                     <TableCell>{row.country}</TableCell>
                     <TableCell>
-                      <Chip label={row.kycStatus} sx={{ bgcolor: kycColor.bg, color: kycColor.text, fontWeight: 700 }} />
+                      <Chip
+                        label={row.kycStatus}
+                        sx={{
+                          bgcolor: kycColor.bg,
+                          color: kycColor.text,
+                          fontWeight: 500,
+                          borderRadius: '999px',
+                          height: 24,
+                        }}
+                      />
                     </TableCell>
                     <TableCell>
                       <IconButton
@@ -142,6 +271,8 @@ export default function CreateTransferListView() {
                           bgcolor: '#9BE6A8',
                           color: '#14532D',
                           borderRadius: '10px',
+                          width: 44,
+                          height: 30,
                           '&:hover': { bgcolor: '#8AD596' },
                         }}
                       >

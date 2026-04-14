@@ -3,8 +3,10 @@ import { ChangePasswordForm } from 'src/sections/profile/change-password/compone
 
 export default function ChangePasswordView() {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', px: { xs: 1.5, md: 2.5 }, py: { xs: 1.5, md: 2 } }}>
-      <ChangePasswordForm />
+    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', py: { xs: 2, md: 6.5 } }}>
+      <Box sx={{ width: '100%', maxWidth: 1177, display: 'flex', justifyContent: 'center', px: { xs: 1, md: 0 } }}>
+        <ChangePasswordForm />
+      </Box>
     </Box>
   );
 }

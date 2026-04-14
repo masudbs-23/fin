@@ -89,6 +89,7 @@ function StatCard({
   icon,
   iconBg,
   iconColor,
+  compact = false,
 }: {
   title: string;
   total: string;
@@ -99,66 +100,69 @@ function StatCard({
   icon: string;
   iconBg: string;
   iconColor: string;
+  compact?: boolean;
 }) {
+  const hasSplit = !!leftLabel || !!rightLabel;
+
   return (
     <Card
       sx={{
         height: 1,
-        borderRadius: 2,
+        minHeight: compact ? 86 : 173,
+        borderRadius: '14px',
         boxShadow: 'none',
         border: '1px solid #E8EEF5',
       }}
     >
-      <CardContent sx={{ p: 2.25 }}>
-        <Stack direction="row" spacing={1.25} alignItems="flex-start">
+      <CardContent sx={{ px: compact ? 2.15 : 3.1, py: compact ? 1.25 : 2.5, height: 1 }}>
+        <Stack direction="row" spacing={1.4} alignItems={compact ? 'center' : 'flex-start'}>
           <Stack
             alignItems="center"
             justifyContent="center"
             sx={{
-              width: 28,
-              height: 28,
-              borderRadius: 1.5,
+              width: 40,
+              height: 40,
+              borderRadius: '14px',
               bgcolor: iconBg,
               color: iconColor,
-              mt: 0.25,
+              flexShrink: 0,
+              mt: compact ? 0 : 0.2,
             }}
           >
-            <Iconify icon={icon} width={16} />
+            <Iconify icon={icon} width={20} />
           </Stack>
 
-          <Stack spacing={0.3} sx={{ minWidth: 0 }}>
-            <Typography sx={{ color: '#7A8394', fontSize: 12, fontWeight: 500 }}>{title}</Typography>
-            <Typography sx={{ color: '#101828', fontSize: 40, lineHeight: 1, fontWeight: 700 }}>
+          <Stack spacing={0.2} sx={{ minWidth: 0, flex: 1 }}>
+            <Typography sx={{ color: '#6A7282', fontSize: 14, fontWeight: 400, lineHeight: '20px' }}>
+              {title}
+            </Typography>
+            <Typography sx={{ color: '#101828', fontSize: compact ? 38 : 40, lineHeight: 1, fontWeight: 600 }}>
               {total}
             </Typography>
           </Stack>
         </Stack>
 
-        {(leftLabel || rightLabel) && (
+        {hasSplit && !compact && (
           <>
-            <Divider sx={{ my: 1.5, borderColor: '#EDF2F7' }} />
-            <Stack direction="row" spacing={2}>
+            <Divider sx={{ my: 1.5, borderColor: '#EAECF0' }} />
+            <Stack direction="row" spacing={0}>
               {!!leftLabel && (
-                <Stack spacing={0.2} sx={{ flex: 1 }}>
-                  <Typography sx={{ color: '#98A2B3', fontSize: 12, fontWeight: 500 }}>
+                <Stack spacing={0.35} sx={{ flex: 1, pr: 1.6, borderRight: '1px solid #EAECF0' }}>
+                  <Typography sx={{ color: '#6A7282', fontSize: 12, fontWeight: 400, lineHeight: '16px' }}>
                     {leftLabel}
                   </Typography>
-                  <Typography sx={{ color: '#111827', fontSize: 30, lineHeight: 1, fontWeight: 700 }}>
+                  <Typography sx={{ color: '#101828', fontSize: 28, lineHeight: '32px', fontWeight: 500 }}>
                     {leftValue}
                   </Typography>
                 </Stack>
               )}
 
-              {!!leftLabel && !!rightLabel && (
-                <Divider orientation="vertical" flexItem sx={{ borderColor: '#EDF2F7' }} />
-              )}
-
               {!!rightLabel && (
-                <Stack spacing={0.2} sx={{ flex: 1 }}>
-                  <Typography sx={{ color: '#98A2B3', fontSize: 12, fontWeight: 500 }}>
+                <Stack spacing={0.35} sx={{ flex: 1, pl: 1.6 }}>
+                  <Typography sx={{ color: '#6A7282', fontSize: 12, fontWeight: 400, lineHeight: '16px' }}>
                     {rightLabel}
                   </Typography>
-                  <Typography sx={{ color: '#111827', fontSize: 30, lineHeight: 1, fontWeight: 700 }}>
+                  <Typography sx={{ color: '#101828', fontSize: 28, lineHeight: '32px', fontWeight: 500 }}>
                     {rightValue}
                   </Typography>
                 </Stack>
@@ -280,11 +284,13 @@ export default function OneView() {
   });
 
   const transactionSeries = transactionTrend?.series || DEFAULT_TRANSACTION_SERIES;
+  const topCards = statCards.slice(0, 3);
+  const bottomCards = statCards.slice(3, 5);
 
   return (
     <Stack spacing={2}>
       <Grid container spacing={1.75}>
-        {statCards.map((card, index) => {
+        {topCards.map((card, index) => {
           const style = STAT_CARD_STYLES[index] || STAT_CARD_STYLES[0];
           return (
             <Grid item xs={12} md={6} lg={4} key={`${card.title}-${index}`}>
@@ -298,6 +304,28 @@ export default function OneView() {
                 icon={style.icon}
                 iconBg={style.iconBg}
                 iconColor={style.iconColor}
+              />
+            </Grid>
+          );
+        })}
+      </Grid>
+
+      <Grid container spacing={1.75}>
+        {bottomCards.map((card, index) => {
+          const style = STAT_CARD_STYLES[index + 3] || STAT_CARD_STYLES[0];
+          return (
+            <Grid item xs={12} md={6} lg={4} key={`${card.title}-${index + 3}`}>
+              <StatCard
+                title={card.title}
+                total={card.total}
+                leftLabel={card.leftLabel}
+                leftValue={card.leftValue}
+                rightLabel={card.rightLabel}
+                rightValue={card.rightValue}
+                icon={style.icon}
+                iconBg={style.iconBg}
+                iconColor={style.iconColor}
+                compact
               />
             </Grid>
           );

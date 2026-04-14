@@ -1,6 +1,7 @@
 import SearchIcon from '@mui/icons-material/Search';
 import DownloadIcon from '@mui/icons-material/Download';
 import EditIcon from '@mui/icons-material/Edit';
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import {
   Box,
   Button,
@@ -22,7 +23,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useGetRecipientList, useUpdateRecipient } from 'src/query/hooks/recipient';
 import { RecipientItem, RecipientStatus, UpdateRecipientPayload } from 'src/types/recipient';
 
@@ -33,13 +34,93 @@ const getStatusColor = (status: string) =>
     ? { bg: '#B9E8C9', text: '#137A3A' }
     : { bg: '#F5E9B5', text: '#9D7A00' };
 
+const MOCK_RECIPIENT_ROWS: RecipientItem[] = [
+  {
+    id: '1',
+    customerCode: 'C-10421',
+    customerName: 'Ahmed Hassan',
+    customerMobile: '+201012345678',
+    recipientName: 'Hassan Ali',
+    recipientMobile: '+201012345678',
+    payoutMethod: 'New Mexico',
+    country: 'Bangladesh',
+    status: 'Active',
+  },
+  {
+    id: '2',
+    customerCode: 'C-10420',
+    customerName: 'Fatima Al-Said',
+    customerMobile: '+201012345678',
+    recipientName: 'Floyd Miles',
+    recipientMobile: '+639171234567',
+    payoutMethod: 'Brazil',
+    country: 'South Africa',
+    status: 'Active',
+  },
+  {
+    id: '3',
+    customerCode: 'C-10419',
+    customerName: 'Mohammed Khalid',
+    customerMobile: '+201012345678',
+    recipientName: 'Kristin Watson',
+    recipientMobile: '(252) 555-0126',
+    payoutMethod: 'United States',
+    country: 'Curacao',
+    status: 'Inactive',
+  },
+  {
+    id: '4',
+    customerCode: 'C-10418',
+    customerName: 'Sara Abdullah',
+    customerMobile: '+201012345678',
+    recipientName: 'Cody Fisher',
+    recipientMobile: '(229) 555-0109',
+    payoutMethod: 'Dhaka',
+    country: 'Aland Islands',
+    status: 'Active',
+  },
+  {
+    id: '5',
+    customerCode: 'C-10417',
+    customerName: 'Omar Yusuf',
+    customerMobile: '+201012345678',
+    recipientName: 'Kathryn Murphy',
+    recipientMobile: '(808) 555-0111',
+    payoutMethod: 'Montana',
+    country: 'Iceland',
+    status: 'Active',
+  },
+  {
+    id: '6',
+    customerCode: 'C-10416',
+    customerName: 'Layla Ibrahim',
+    customerMobile: '+201012345678',
+    recipientName: 'Jenny Wilson',
+    recipientMobile: '(308) 555-0121',
+    payoutMethod: 'Washington',
+    country: 'Iran',
+    status: 'Active',
+  },
+  {
+    id: '7',
+    customerCode: 'C-10415',
+    customerName: 'Khalid Al-Rashid',
+    customerMobile: '+201012345678',
+    recipientName: '+9665522334455',
+    recipientMobile: '(319) 555-0115',
+    payoutMethod: 'New York',
+    country: 'Guinea',
+    status: 'Active',
+  },
+];
+
 export default function RecipientListView() {
   const [filters, setFilters] = useState({
     customerMobileNumber: '',
     recipientMobileNumber: '',
     payoutType: '',
   });
-  const [rows, setRows] = useState<RecipientItem[]>([]);
+  const [rows, setRows] = useState<RecipientItem[]>(MOCK_RECIPIENT_ROWS);
   const [selectedRecipient, setSelectedRecipient] = useState<RecipientItem | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editForm, setEditForm] = useState<UpdateRecipientPayload>({
@@ -50,14 +131,9 @@ export default function RecipientListView() {
     status: 'Active',
   });
 
-  const { data } = useGetRecipientList(filters);
+  // Keep hook ready for API integration; UI currently renders mock rows by design.
+  const { data } = useGetRecipientList(filters, false);
   const updateRecipientMutation = useUpdateRecipient();
-
-  useEffect(() => {
-    if (data?.data?.list) {
-      setRows(data.data.list);
-    }
-  }, [data]);
 
   const filteredRows = useMemo(
     () =>
@@ -72,6 +148,21 @@ export default function RecipientListView() {
       }),
     [rows, filters.customerMobileNumber, filters.recipientMobileNumber]
   );
+
+  const inputSx = {
+    '& .MuiOutlinedInput-root': {
+      height: 44,
+      borderRadius: '8px',
+      bgcolor: '#FFFFFF',
+      '& fieldset': { borderColor: '#D0D5DD' },
+      '&:hover fieldset': { borderColor: '#D0D5DD' },
+      '&.Mui-focused fieldset': { borderColor: '#03BC00' },
+    },
+    '& .MuiInputBase-input': {
+      fontSize: 14,
+      color: '#667085',
+    },
+  };
 
   const handleEditClick = (row: RecipientItem) => {
     setSelectedRecipient(row);
@@ -111,7 +202,7 @@ export default function RecipientListView() {
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, md: 2 }, pt: 0.5 }}>
       <Stack spacing={2.5}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E' }}>Recipient</Typography>
@@ -131,9 +222,9 @@ export default function RecipientListView() {
           </Button>
         </Stack>
 
-        <Grid container spacing={1.5} alignItems="end">
+        <Grid container spacing={1} alignItems="end">
           <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 14, color: '#6B7280' }}>Customer Mobile Number</Typography>
+            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Customer Mobile Number</Typography>
             <TextField
               fullWidth
               size="small"
@@ -145,10 +236,11 @@ export default function RecipientListView() {
                   customerMobileNumber: event.target.value,
                 }))
               }
+              sx={inputSx}
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 14, color: '#6B7280' }}>Recipient Mobile Number</Typography>
+            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Recipient Mobile Number</Typography>
             <TextField
               fullWidth
               size="small"
@@ -160,10 +252,11 @@ export default function RecipientListView() {
                   recipientMobileNumber: event.target.value,
                 }))
               }
+              sx={inputSx}
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 14, color: '#6B7280' }}>Payout Type</Typography>
+            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Payout Type</Typography>
             <TextField
               fullWidth
               select
@@ -175,6 +268,8 @@ export default function RecipientListView() {
                   payoutType: event.target.value,
                 }))
               }
+              SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+              sx={inputSx}
             >
               <MenuItem value="">Choose</MenuItem>
               {PAYOUT_TYPES.map((type) => (
@@ -186,49 +281,107 @@ export default function RecipientListView() {
           </Grid>
           <Grid item xs={12} md={3}>
             <Stack direction="row" spacing={1}>
-              <IconButton sx={{ bgcolor: '#03BC00', color: '#fff', '&:hover': { bgcolor: '#02A900' } }}>
+              <IconButton
+                sx={{
+                  width: 44,
+                  height: 40,
+                  borderRadius: '12px',
+                  bgcolor: '#03BC00',
+                  color: '#fff',
+                  '&:hover': { bgcolor: '#02A900' },
+                }}
+              >
                 <SearchIcon />
               </IconButton>
-              <IconButton sx={{ bgcolor: '#03BC00', color: '#fff', '&:hover': { bgcolor: '#02A900' } }}>
+              <IconButton
+                sx={{
+                  width: 48,
+                  height: 40,
+                  borderRadius: '12px',
+                  bgcolor: '#03BC00',
+                  color: '#fff',
+                  '&:hover': { bgcolor: '#02A900' },
+                }}
+              >
                 <DownloadIcon />
               </IconButton>
             </Stack>
           </Grid>
         </Grid>
 
-        <Typography sx={{ mt: 0.5, fontSize: 30, fontWeight: 700, color: '#191B1E' }}>Recipient List</Typography>
+        <Box
+          sx={{
+            mt: 1,
+            height: 22,
+            display: 'flex',
+            alignItems: 'center',
+            px: 0.75,
+            borderRadius: '10px',
+            bgcolor: '#FFFFFF',
+          }}
+        >
+          <Typography sx={{ fontSize: 16, fontWeight: 500, color: '#191B1E' }}>Recipient List</Typography>
+        </Box>
 
         <Box sx={{ overflowX: 'auto' }}>
-          <Table>
+          <Table sx={{ minWidth: 1120 }}>
             <TableHead>
-              <TableRow>
-                <TableCell>Customer Code</TableCell>
-                <TableCell>Customer Name</TableCell>
-                <TableCell>Customer Mobile</TableCell>
-                <TableCell>Recipient Name</TableCell>
-                <TableCell>Recipient Mobile</TableCell>
-                <TableCell>Payout Method</TableCell>
-                <TableCell>Country</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Action</TableCell>
+              <TableRow sx={{ bgcolor: '#F9FAFB' }}>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Code</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Name</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Mobile</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Recipient Name</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Recipient Mobile</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Payout Method</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Country</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Status</TableCell>
+                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredRows.map((row) => {
                 const statusColor = getStatusColor(row.status);
                 return (
-                  <TableRow key={row.id}>
+                  <TableRow
+                    key={row.id}
+                    sx={{
+                      '& td': {
+                        borderBottom: '0.74px solid #EAECF0',
+                        py: 1.6,
+                        fontSize: 14,
+                        color: '#344054',
+                      },
+                    }}
+                  >
                     <TableCell>
-                      <Chip label={row.customerCode} sx={{ bgcolor: '#E4F5E8', color: '#166534', fontWeight: 700 }} />
+                      <Chip
+                        label={row.customerCode}
+                        sx={{
+                          bgcolor: '#ECFDF3',
+                          color: '#166534',
+                          fontWeight: 600,
+                          borderRadius: '10px',
+                          height: 24,
+                        }}
+                      />
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>{row.customerName}</TableCell>
+                    <TableCell sx={{ color: '#101828 !important', fontWeight: 500 }}>{row.customerName}</TableCell>
                     <TableCell>{row.customerMobile}</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>{row.recipientName}</TableCell>
+                    <TableCell sx={{ color: '#101828 !important', fontWeight: 500 }}>{row.recipientName}</TableCell>
                     <TableCell>{row.recipientMobile}</TableCell>
                     <TableCell>{row.payoutMethod}</TableCell>
                     <TableCell>{row.country}</TableCell>
                     <TableCell>
-                      <Chip label={row.status} sx={{ bgcolor: statusColor.bg, color: statusColor.text, fontWeight: 700 }} />
+                      <Chip
+                        label={row.status}
+                        sx={{
+                          bgcolor: statusColor.bg,
+                          color: statusColor.text,
+                          fontWeight: 500,
+                          borderRadius: '999px',
+                          height: 24,
+                        }}
+                      />
                     </TableCell>
                     <TableCell>
                       <Button
@@ -239,7 +392,10 @@ export default function RecipientListView() {
                           bgcolor: '#9BE6A8',
                           color: '#14532D',
                           borderRadius: '10px',
-                          px: 1.5,
+                          px: 1.4,
+                          height: 34,
+                          textTransform: 'none',
+                          fontWeight: 500,
                           '&:hover': { bgcolor: '#8AD596' },
                         }}
                       >
