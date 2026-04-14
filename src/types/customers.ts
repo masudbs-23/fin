@@ -35,6 +35,24 @@ export interface CreateCustomerPayload {
   lastName: string;
   gender: string;
   dateOfBirth: string;
+  phoneNumber: string;
+  email: string;
+  address: string;
+  city: string;
+  country: string;
+  nidNumber: string;
+  nationality: string;
+  nidDocumentName?: string;
+  photoDocumentName?: string;
+}
+
+export interface CreateCustomerResponse {
+  responseCode: string;
+  responseMessage: string;
+  success: boolean;
+  data: {
+    customer: Customer;
+  };
 }
 
 export interface UpdateCustomerPayload {

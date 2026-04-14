@@ -3,6 +3,7 @@ import { createCustomer, getCustomerList, updateCustomer } from 'src/query/api/s
 import { QUERY_KEY } from 'src/query/lib/query-keys';
 import {
   CreateCustomerPayload,
+  CreateCustomerResponse,
   Customer,
   CustomerListPayload,
   CustomerListResponse,
@@ -29,7 +30,7 @@ export const useUpdateCustomer = () => {
 
 export const useCreateCustomer = () => {
   const queryClient = useQueryClient();
-  return useMutation<Customer, unknown, CreateCustomerPayload>({
+  return useMutation<CreateCustomerResponse, unknown, CreateCustomerPayload>({
     mutationFn: (payload) => createCustomer(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.CUSTOMER_LIST] });

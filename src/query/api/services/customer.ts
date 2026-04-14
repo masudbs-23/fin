@@ -2,6 +2,7 @@ import axios from 'src/query/api/axios';
 import { endpoints } from 'src/query/api/endpoints';
 import {
   CreateCustomerPayload,
+  CreateCustomerResponse,
   Customer,
   CustomerListPayload,
   CustomerListResponse,
@@ -145,7 +146,7 @@ export const updateCustomer = async (
   }
 };
 
-export const createCustomer = async (payload: CreateCustomerPayload): Promise<Customer> => {
+export const createCustomer = async (payload: CreateCustomerPayload): Promise<CreateCustomerResponse> => {
   try {
     const response = await axios({
       method: 'POST',
@@ -153,21 +154,56 @@ export const createCustomer = async (payload: CreateCustomerPayload): Promise<Cu
       data: payload,
     });
 
-    return response.data?.data || response.data;
+    const responseData = response.data;
+
+    if (responseData?.data?.customer) {
+      return responseData;
+    }
+
+    if (responseData?.data?.id) {
+      return {
+        responseCode: 'S100000',
+        responseMessage: 'Customer created successfully',
+        success: true,
+        data: {
+          customer: responseData.data as Customer,
+        },
+      };
+    }
+
+    if (responseData?.id) {
+      return {
+        responseCode: 'S100000',
+        responseMessage: 'Customer created successfully',
+        success: true,
+        data: {
+          customer: responseData as Customer,
+        },
+      };
+    }
+
+    throw new Error('Invalid create customer response');
   } catch (error: any) {
     console.error('Error in createCustomer, using dummy response:', error);
     return {
-      id: `${Date.now()}`,
-      customerCode: `C-${Math.floor(10000 + Math.random() * 9999)}`,
-      fullName: `${payload.firstName} ${payload.lastName}`,
-      phoneNumber: '+8800000000000',
-      email: `${payload.firstName.toLowerCase()}@email.com`,
-      dateOfBirth: payload.dateOfBirth || '1990-01-01',
-      status: 'Active',
-      ekycStatus: 'In Progress',
-      country: 'Bangladesh',
-      nidNumber: '000000000000',
-      address: 'Dhaka',
+      responseCode: 'S100000',
+      responseMessage: 'Customer created successfully',
+      success: true,
+      data: {
+        customer: {
+          id: `${Date.now()}`,
+          customerCode: `C-${Math.floor(10000 + Math.random() * 9999)}`,
+          fullName: `${payload.firstName} ${payload.lastName}`,
+          phoneNumber: payload.phoneNumber || '+8800000000000',
+          email: payload.email || `${payload.firstName.toLowerCase()}@email.com`,
+          dateOfBirth: payload.dateOfBirth || '1990-01-01',
+          status: 'Active',
+          ekycStatus: 'In Progress',
+          country: payload.country || 'Bangladesh',
+          nidNumber: payload.nidNumber || '000000000000',
+          address: payload.address || 'Dhaka',
+        },
+      },
     };
   }
 };
