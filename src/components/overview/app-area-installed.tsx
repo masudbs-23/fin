@@ -18,6 +18,8 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 interface Props extends CardProps {
   title?: string;
   subheader?: string;
+  chartHeight?: number;
+  footer?: React.ReactNode;
   chart: {
     categories?: string[];
     colors?: string[][];
@@ -32,7 +34,14 @@ interface Props extends CardProps {
   };
 }
 
-export default function AppAreaInstalled({ title, subheader, chart, ...other }: Props) {
+export default function AppAreaInstalled({
+  title,
+  subheader,
+  chart,
+  chartHeight = 364,
+  footer,
+  ...other
+}: Props) {
   const theme = useTheme();
 
   const {
@@ -120,11 +129,13 @@ export default function AppAreaInstalled({ title, subheader, chart, ...other }: 
                 series={item.data}
                 options={chartOptions}
                 width="100%"
-                height={364}
+                height={chartHeight}
               />
             )}
           </Box>
         ))}
+
+        {footer}
       </Card>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 140 }}>
