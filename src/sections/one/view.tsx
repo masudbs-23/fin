@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
@@ -77,6 +78,19 @@ const DEFAULT_COMMISSION_SERIES = [
       },
     ],
   },
+];
+const DEFAULT_CUSTOMER_GROWTH_SERIES = [
+  { name: 'Total Recipients', data: [1800, 2000, 2200, 2400, 2650, 2850, 3050, 3280, 3500, 3720, 3950, 4200] },
+  { name: 'Active Customers', data: [1600, 1780, 1960, 2120, 2300, 2470, 2650, 2830, 3000, 3200, 3380, 3600] },
+  { name: 'Monthly Onboarded', data: [60, 72, 85, 80, 98, 110, 122, 132, 141, 156, 170, 182] },
+];
+const DEFAULT_RECENT_ACTIVITY = [
+  { id: 1, name: 'Sarah Johnson', type: 'Transaction', status: 'Completed', time: '2 min ago', amount: '$2,450', icon: 'solar:check-circle-bold', iconBg: '#ECFDF3', iconColor: '#16A34A' },
+  { id: 2, name: 'Michael Chen', type: 'Transaction', status: 'Pending', time: '15 min ago', amount: '$1,820', icon: 'solar:clock-circle-bold', iconBg: '#FFF7ED', iconColor: '#F97316' },
+  { id: 3, name: 'Emma Wilson', type: 'Commission', status: 'Settled', time: '1 hour ago', amount: '$125', icon: 'solar:wallet-money-bold', iconBg: '#ECFDF3', iconColor: '#10B981' },
+  { id: 4, name: 'David Martinez', type: 'Transaction', status: 'Completed', time: '2 hours ago', amount: '$3,200', icon: 'solar:check-circle-bold', iconBg: '#ECFDF3', iconColor: '#16A34A' },
+  { id: 5, name: 'Lisa Anderson', type: 'Commission', status: 'Earned', time: '3 hours ago', amount: '$89', icon: 'solar:wallet-money-bold', iconBg: '#F5F3FF', iconColor: '#8B5CF6' },
+  { id: 6, name: 'James Taylor', type: 'Transaction', status: 'Pending', time: '4 hours ago', amount: '$950', icon: 'solar:clock-circle-bold', iconBg: '#FFF7ED', iconColor: '#F97316' },
 ];
 
 function StatCard({
@@ -286,6 +300,48 @@ export default function OneView() {
   const transactionSeries = transactionTrend?.series || DEFAULT_TRANSACTION_SERIES;
   const topCards = statCards.slice(0, 3);
   const bottomCards = statCards.slice(3, 5);
+  const customerGrowthOptions = useChart({
+    stroke: { width: [2.5, 2.5, 2], curve: 'smooth' },
+    colors: ['#10B981', '#F59E0B', '#3B82F6'],
+    fill: {
+      type: ['gradient', 'gradient', 'solid'],
+      opacity: [0.24, 0.18, 1],
+      gradient: {
+        shadeIntensity: 0,
+        opacityFrom: 0.24,
+        opacityTo: 0,
+        stops: [0, 100],
+      },
+    },
+    markers: { size: [0, 0, 0] },
+    xaxis: {
+      categories: MONTHS,
+      labels: { style: { colors: '#98A2B3' } },
+    },
+    yaxis: {
+      min: 0,
+      max: 6000,
+      tickAmount: 4,
+      labels: {
+        formatter: (value: number) => `${Math.round(value)}`,
+        style: { colors: '#98A2B3' },
+      },
+    },
+    legend: {
+      position: 'bottom',
+      horizontalAlign: 'left',
+      fontSize: '12px',
+      markers: { size: 8 },
+      itemMargin: { horizontal: 16 },
+    },
+    grid: {
+      borderColor: '#EDF2F7',
+      strokeDashArray: 4,
+    },
+    tooltip: {
+      y: { formatter: (value: number) => `${Math.round(value)}` },
+    },
+  });
 
   return (
     <Stack spacing={2}>
@@ -471,6 +527,130 @@ export default function OneView() {
               </CardContent>
             </Card>
           </Stack>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={1.75}>
+        <Grid item xs={12} lg={7}>
+          <Card
+            sx={{
+              borderRadius: '14px',
+              boxShadow: 'none',
+              border: '1px solid #E8EEF5',
+            }}
+          >
+            <CardContent sx={{ p: 2.25 }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.75 }}>
+                <Stack>
+                  <Typography sx={{ color: '#101828', fontSize: 34, fontWeight: 700 }}>Customer Growth</Typography>
+                  <Typography sx={{ color: '#6A7282', fontSize: 14, fontWeight: 400 }}>
+                    Customer acquisition and activity trends
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={0.5}
+                  sx={{
+                    px: 1.25,
+                    py: 0.75,
+                    border: '1px solid #D1D5DB',
+                    borderRadius: 1.5,
+                    color: '#344054',
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                >
+                  <Typography sx={{ fontSize: 12, fontWeight: 600 }}>Last 12 Month</Typography>
+                  <Iconify icon="eva:arrow-ios-downward-fill" width={14} />
+                </Stack>
+              </Stack>
+
+              <Chart
+                dir="ltr"
+                type="area"
+                series={DEFAULT_CUSTOMER_GROWTH_SERIES}
+                options={customerGrowthOptions}
+                height={330}
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} lg={5}>
+          <Card
+            sx={{
+              borderRadius: '14px',
+              boxShadow: 'none',
+              border: '1px solid #E8EEF5',
+              height: 1,
+            }}
+          >
+            <CardContent sx={{ p: 2.25 }}>
+              <Stack sx={{ mb: 2 }}>
+                <Typography sx={{ color: '#101828', fontSize: 28, fontWeight: 500 }}>Recent Activity</Typography>
+                <Typography sx={{ color: '#6A7282', fontSize: 14, fontWeight: 400 }}>
+                  Latest transactions
+                </Typography>
+              </Stack>
+
+              <Stack spacing={1}>
+                {DEFAULT_RECENT_ACTIVITY.map((item, index) => (
+                  <Stack
+                    key={item.id}
+                    direction="row"
+                    spacing={1.5}
+                    alignItems="flex-start"
+                    sx={{
+                      py: 0.9,
+                      borderBottom:
+                        index === DEFAULT_RECENT_ACTIVITY.length - 1 ? 'none' : '1px solid #F1F5F9',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: '10px',
+                        bgcolor: item.iconBg,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: item.iconColor,
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Iconify icon={item.icon} width={16} />
+                    </Box>
+
+                    <Stack sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography sx={{ color: '#101828', fontSize: 14, fontWeight: 500, lineHeight: '20px' }}>
+                        {item.name}
+                      </Typography>
+                      <Typography sx={{ color: '#6A7282', fontSize: 12, lineHeight: '16px' }}>
+                        {item.type} - {item.status}
+                      </Typography>
+                      <Typography sx={{ color: '#99A1AF', fontSize: 12, lineHeight: '16px' }}>
+                        {item.time}
+                      </Typography>
+                    </Stack>
+
+                    <Typography
+                      sx={{
+                        color: '#101828',
+                        fontSize: 14,
+                        fontWeight: 500,
+                        lineHeight: '20px',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {item.amount}
+                    </Typography>
+                  </Stack>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Stack>
