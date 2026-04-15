@@ -15,7 +15,7 @@ import Iconify from 'src/components/iconify';
 import { CustomInput } from 'src/components/custom-input';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useSetNewPassword } from 'src/query/hooks/auth/forgot-password';
-import { useGenerateOtp, useGetTfaType, useVerifyOtp } from 'src/query/hooks/auth/tfa';
+import { useBindDevice, useGenerateOtp, useGetTfaType, useVerifyOtp } from 'src/query/hooks/auth/tfa';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import { OtpFlowContext, OTP_FLOW_CONTEXT_KEY } from 'src/types/auth-flow';
@@ -42,6 +42,50 @@ const writeOtpContext = (ctx: OtpFlowContext) => {
 };
 
 const getAccessToken = () => localStorage.getItem('accessToken') || '';
+
+const normalizePlatformInfo = (platform: string) => {
+  if (/^win/i.test(platform)) return 'Windows';
+  if (/^mac/i.test(platform)) return 'MacOS';
+  if (/linux/i.test(platform)) return 'Linux';
+  return platform || 'Unknown';
+};
+
+const getOrCreateDeviceIdentifier = () => {
+  const existingIdentifier = localStorage.getItem('deviceIdentifier');
+  if (existingIdentifier) return existingIdentifier;
+  const generatedIdentifier = `${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`.slice(0, 32);
+  localStorage.setItem('deviceIdentifier', generatedIdentifier);
+  return generatedIdentifier;
+};
+
+const buildDeviceRequestPayload = () => {
+  const language = navigator.language || 'en-US';
+  const platform = navigator.platform || 'Windows';
+  const normalizedPlatform = normalizePlatformInfo(platform);
+  const userAgent = navigator.userAgent || '';
+  const isWindows = /Win/i.test(userAgent);
+  const os = isWindows ? 'Windows' : 'Unknown';
+  const osVersion = /Windows NT (\d+(?:\.\d+)?)/i.exec(userAgent)?.[1] || '10';
+  const browserName = /Chrome/i.test(userAgent) ? 'Chrome' : 'Browser';
+  const deviceIdentifier = getOrCreateDeviceIdentifier();
+  const deviceIp = localStorage.getItem('deviceIp') || '182.48.79.227';
+  const pushToken = `pushToken_${deviceIdentifier.slice(0, 12)}_${Date.now().toString(36).slice(-8)}`;
+
+  return {
+    appLanguage: language,
+    appVersion: 'appVersion_1',
+    deviceIp,
+    deviceModel: 'Unknown',
+    deviceName: `${browserName} on ${os}`,
+    deviceOS: os,
+    deviceOsVersion: osVersion,
+    platformType: 2,
+    platformInfo: normalizedPlatform,
+    platformVersion: osVersion,
+    deviceIdentifier,
+    pushToken,
+  };
+};
 
 export default function VerifyOtpForm({
   mode = 'verify-otp',
@@ -72,6 +116,7 @@ export default function VerifyOtpForm({
   const getTfaTypeMutation = useGetTfaType();
   const generateOtpMutation = useGenerateOtp();
   const verifyOtpMutation = useVerifyOtp();
+  const bindDeviceMutation = useBindDevice();
   const setNewPasswordMutation = useSetNewPassword();
   const getTfaType = getTfaTypeMutation.mutateAsync;
   const generateOtp = generateOtpMutation.mutateAsync;
@@ -242,6 +287,22 @@ export default function VerifyOtpForm({
         if (verifyRes.data.verified) {
           enqueueSnackbar(verifyRes.responseMessage, { variant: 'success' });
           if (otpContext.flowType === 'DEVICE_BINDING') {
+            const bindResponse = await bindDeviceMutation.mutateAsync({
+              payload: {
+                deviceRequest: buildDeviceRequestPayload(),
+                globalFeatureCode: 'DEVICE_BINDING',
+                identifierValue: otpContext.identifierValue,
+                sessionId: otpContext.sessionId,
+              },
+              authToken: otpContext.authToken || getAccessToken(),
+            });
+
+            if (!bindResponse.success || bindResponse.responseCode !== 'S100000') {
+              setErrorMsg(bindResponse.responseMessage || 'Device binding failed');
+              return;
+            }
+
+            enqueueSnackbar(bindResponse.responseMessage, { variant: 'success' });
             sessionStorage.setItem(DEVICE_BINDING_VERIFIED_KEY, 'true');
             sessionStorage.removeItem(OTP_FLOW_CONTEXT_KEY);
             router.push(paths.dashboard.root);
@@ -256,7 +317,7 @@ export default function VerifyOtpForm({
         setErrorMsg(formatErrorMessage(error));
       }
     },
-    [enqueueSnackbar, otpContext, router, verifyOtpMutation]
+    [bindDeviceMutation, enqueueSnackbar, otpContext, router, verifyOtpMutation]
   );
 
   useEffect(() => {
@@ -266,14 +327,21 @@ export default function VerifyOtpForm({
       lastAutoSubmittedRef.current = '';
       return;
     }
-    if (verifyOtpMutation.isPending) return;
+    if (verifyOtpMutation.isPending || bindDeviceMutation.isPending) return;
     const sessionKey = otpContext?.sessionId || 'no-session';
     const submitKey = `${sessionKey}:${otp}`;
     if (lastAutoSubmittedRef.current === submitKey) return;
 
     lastAutoSubmittedRef.current = submitKey;
     verifyOtpCode(otp);
-  }, [otpValues, otpContext?.sessionId, showSetPasswordForm, verifyOtpCode, verifyOtpMutation.isPending]);
+  }, [
+    bindDeviceMutation.isPending,
+    otpValues,
+    otpContext?.sessionId,
+    showSetPasswordForm,
+    verifyOtpCode,
+    verifyOtpMutation.isPending,
+  ]);
 
   const handleVerifyOtp = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -403,9 +471,9 @@ export default function VerifyOtpForm({
               ))}
             </Box>
 
-            {verifyOtpMutation.isPending && (
+            {(verifyOtpMutation.isPending || bindDeviceMutation.isPending) && (
               <Typography sx={{ fontSize: '13px', color: '#667085', mt: -1.25 }}>
-                Verifying OTP...
+                {bindDeviceMutation.isPending ? 'Binding device...' : 'Verifying OTP...'}
               </Typography>
             )}
 

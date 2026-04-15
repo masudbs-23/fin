@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { generateOtp, getTfaType, verifyOtp } from 'src/query/api/services/auth/tfa';
-import { GenerateOtpPayload, VerifyOtpPayload } from 'src/types/auth-flow';
+import { bindDevice, generateOtp, getTfaType, verifyOtp } from 'src/query/api/services/auth/tfa';
+import { DeviceBindingPayload, GenerateOtpPayload, VerifyOtpPayload } from 'src/types/auth-flow';
 
 export const useGetTfaType = () =>
   useMutation({
@@ -27,4 +27,10 @@ export const useVerifyOtp = () =>
   useMutation({
     mutationFn: ({ payload, authToken }: { payload: VerifyOtpPayload; authToken?: string }) =>
       verifyOtp(payload, authToken),
+  });
+
+export const useBindDevice = () =>
+  useMutation({
+    mutationFn: ({ payload, authToken }: { payload: DeviceBindingPayload; authToken?: string }) =>
+      bindDevice(payload, authToken),
   });

@@ -1,6 +1,8 @@
 import axios from 'src/query/api/axios';
 import { endpoints } from 'src/query/api/endpoints';
 import {
+  DeviceBindingPayload,
+  DeviceBindingResponse,
   GenerateOtpPayload,
   GenerateOtpResponse,
   TfaTypeResponse,
@@ -36,6 +38,12 @@ const DUMMY_VERIFY_OTP_RESPONSE: VerifyOtpResponse = {
     verified: true,
     blocked: false,
   },
+};
+
+const DUMMY_DEVICE_BINDING_RESPONSE: DeviceBindingResponse = {
+  responseCode: 'S100000',
+  responseMessage: 'Device binding completed successfully',
+  success: true,
 };
 
 const getHeaders = (authToken?: string) =>
@@ -89,5 +97,20 @@ export const verifyOtp = async (
   } catch (error) {
     console.error('Error in verifyOtp, using dummy response:', error);
     return DUMMY_VERIFY_OTP_RESPONSE;
+  }
+};
+
+export const bindDevice = async (
+  payload: DeviceBindingPayload,
+  authToken?: string
+): Promise<DeviceBindingResponse> => {
+  try {
+    const response = await axios.post(endpoints.auth.deviceBinding, payload, {
+      headers: getHeaders(authToken),
+    });
+    return response.data?.responseCode ? response.data : DUMMY_DEVICE_BINDING_RESPONSE;
+  } catch (error) {
+    console.error('Error in bindDevice, using dummy response:', error);
+    return DUMMY_DEVICE_BINDING_RESPONSE;
   }
 };

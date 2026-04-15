@@ -146,9 +146,17 @@ const getDeviceIdentifier = () => {
 
 const getIpAddress = () => localStorage.getItem('deviceIp') || '182.48.79.227';
 
+const normalizePlatformInfo = (platform: string) => {
+  if (/^win/i.test(platform)) return 'Windows';
+  if (/^mac/i.test(platform)) return 'MacOS';
+  if (/linux/i.test(platform)) return 'Linux';
+  return platform || 'Unknown';
+};
+
 const buildLoginPayload = (email: string, password: string): LoginPayload => {
   const language = navigator.language || 'en-US';
   const platform = navigator.platform || 'Windows';
+  const normalizedPlatform = normalizePlatformInfo(platform);
   const userAgent = navigator.userAgent || '';
   const os = /Win/i.test(userAgent) ? 'Windows' : 'Unknown';
   const osVersion = /Windows NT (\d+(?:\.\d+)?)/i.exec(userAgent)?.[1] || '10';
@@ -162,7 +170,7 @@ const buildLoginPayload = (email: string, password: string): LoginPayload => {
     userType: USER_TYPE,
     deviceInfo: {
       platformType: 2,
-      platformInfo: platform,
+      platformInfo: normalizedPlatform,
       platformVersion: osVersion,
       deviceIdentifier,
       appLanguage: language,

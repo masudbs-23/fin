@@ -11,6 +11,7 @@ export const endpoints = {
       `/tfa/global/user/features/${featureCode}/${identifierValue}/${userType}/tfa/type`,
     tfaGenerateOtp: '/tfa/global/users/generate/otp',
     tfaVerifyOtp: '/tfa/global/user/tfa/verification',
+    deviceBinding: '/api/v1/customer/device/binding',
   },
   dashboard: {
     overview: '/api/dashboard/overview',

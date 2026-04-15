@@ -91,6 +91,35 @@ export interface VerifyOtpResponse {
   };
 }
 
+export interface DeviceBindingRequest {
+  appLanguage: string;
+  appVersion: string;
+  deviceIp: string;
+  deviceModel: string;
+  deviceName: string;
+  deviceOS: string;
+  deviceOsVersion: string;
+  platformType: number;
+  platformInfo: string;
+  platformVersion: string;
+  deviceIdentifier: string;
+  pushToken: string;
+}
+
+export interface DeviceBindingPayload {
+  deviceRequest: DeviceBindingRequest;
+  globalFeatureCode: 'DEVICE_BINDING';
+  identifierValue: string;
+  sessionId: string;
+}
+
+export interface DeviceBindingResponse {
+  responseCode: string;
+  responseMessage: string;
+  success: boolean;
+  data?: Record<string, unknown>;
+}
+
 export type OtpFlowType = 'FORGOT_PASSWORD' | 'DEVICE_BINDING';
 
 export interface OtpFlowContext {
