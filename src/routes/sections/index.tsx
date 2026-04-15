@@ -7,10 +7,10 @@ import { dashboardRoutes } from 'src/routes/sections/dashboard';
 import { mainRoutes } from 'src/routes/sections/main';
 import { profileRoutes } from 'src/routes/sections/profile';
 import { productsRoutes } from './products';
-import { ordersRoutes } from './orders';
-import { manufacturersRoutes } from './manufacturers';
-import { tagsRoutes } from './tags';
-import { categoriesRoutes } from './categories';
+import { transfersRoutes } from './transfers';
+import { recipientsRoutes } from './recipients';
+import { transactionsRoutes } from './transactions';
+import { commissionsRoutes } from './commissions';
 import { brandsRoutes } from './brands';
 import { customersRoutes } from './customers';
 
@@ -36,16 +36,16 @@ export default function Router() {
     // ...catalogRoutes,
     // Product routes
     ...productsRoutes,
-    // Manufacturer routes
-    ...manufacturersRoutes,
-    // Category routes
-    ...categoriesRoutes,
-    // Tags routes
-    ...tagsRoutes,
+    // Recipient routes
+    ...recipientsRoutes,
+    // Transaction routes
+    ...transactionsRoutes,
+    // Commission routes
+    ...commissionsRoutes,
     // brans routes
     ...brandsRoutes,
-    // Orders routes
-    ...ordersRoutes,
+    // Transfer routes
+    ...transfersRoutes,
 
     // Main routes
     ...mainRoutes,

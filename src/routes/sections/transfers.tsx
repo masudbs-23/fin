@@ -5,10 +5,10 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
-const OrdersListPage = lazy(() => import('src/pages/orders/orders-list-page'));
-const OrderDetailsPage = lazy(() => import('src/pages/orders/order-details-page'));
+const TransfersListPage = lazy(() => import('src/pages/orders/orders-list-page'));
+const TransferDetailsPage = lazy(() => import('src/pages/orders/order-details-page'));
 
-export const ordersRoutes = [
+export const transfersRoutes = [
   {
     path: '/transfers',
     element: (
@@ -21,8 +21,8 @@ export const ordersRoutes = [
       </AuthGuard>
     ),
     children: [
-      { element: <OrdersListPage />, index: true },
-      { element: <OrderDetailsPage />, path: ':orderId' },
+      { element: <TransfersListPage />, index: true },
+      { element: <TransferDetailsPage />, path: ':orderId' },
     ],
   },
 ];

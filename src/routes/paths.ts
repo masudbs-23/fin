@@ -7,11 +7,11 @@ const ROOTS = {
   CATALOG: '/catalog',
   PRODUCTS: '/products',
   CUSTOMERS: '/customers',
-  MANUFACTURERS: '/recipients',
-  CATEGORIES: '/transactions',
-  TAGS: '/commissions',
+  RECIPIENTS: '/recipients',
+  TRANSACTIONS: '/transactions',
+  COMMISSIONS: '/commissions',
   BRANDS: '/brands',
-  ORDERS: '/transfers',
+  TRANSFERS: '/transfers',
 };
 
 // ----------------------------------------------------------------------
@@ -51,12 +51,11 @@ export const paths = {
   customers: {
     root: ROOTS.CUSTOMERS,
   },
-  // TAGS
-  tags: {
-    root: ROOTS.TAGS,
-    tagCreate: `${ROOTS.TAGS}/create`,
-    tagView: (id: string) => `${ROOTS.TAGS}/${id}/view`,
-    tagEdit: (id: string) => `${ROOTS.TAGS}/${id}/edit`,
+  commissions: {
+    root: ROOTS.COMMISSIONS,
+    commissionCreate: `${ROOTS.COMMISSIONS}/create`,
+    commissionView: (id: string) => `${ROOTS.COMMISSIONS}/${id}/view`,
+    commissionEdit: (id: string) => `${ROOTS.COMMISSIONS}/${id}/edit`,
   },
   // BRANDS
   brands: {
@@ -65,23 +64,43 @@ export const paths = {
     brandView: (id: string) => `${ROOTS.BRANDS}/${id}/view`,
     brandEdit: (id: string) => `${ROOTS.BRANDS}/${id}/edit`,
   },
-  // CATEGORIES
+  transactions: {
+    root: ROOTS.TRANSACTIONS,
+    transactionCreate: `${ROOTS.TRANSACTIONS}/create`,
+    transactionView: (id: string) => `${ROOTS.TRANSACTIONS}/${id}/view`,
+    transactionEdit: (id: string) => `${ROOTS.TRANSACTIONS}/${id}/edit`,
+  },
+  recipients: {
+    root: ROOTS.RECIPIENTS,
+    recipientCreate: `${ROOTS.RECIPIENTS}/create`,
+    recipientView: (id: string) => `${ROOTS.RECIPIENTS}/${id}/view`,
+    recipientEdit: (id: string) => `${ROOTS.RECIPIENTS}/${id}/edit`,
+  },
+  transfers: {
+    root: ROOTS.TRANSFERS,
+    transferDetails: (id: string) => `${ROOTS.TRANSFERS}/${id}`,
+  },
+  // Legacy aliases kept for compatibility
+  tags: {
+    root: ROOTS.COMMISSIONS,
+    tagCreate: `${ROOTS.COMMISSIONS}/create`,
+    tagView: (id: string) => `${ROOTS.COMMISSIONS}/${id}/view`,
+    tagEdit: (id: string) => `${ROOTS.COMMISSIONS}/${id}/edit`,
+  },
   categories: {
-    root: ROOTS.CATEGORIES,
-    categoryCreate: `${ROOTS.CATEGORIES}/create`,
-    categoryView: (id: string) => `${ROOTS.CATEGORIES}/${id}/view`,
-    categoryEdit: (id: string) => `${ROOTS.CATEGORIES}/${id}/edit`,
+    root: ROOTS.TRANSACTIONS,
+    categoryCreate: `${ROOTS.TRANSACTIONS}/create`,
+    categoryView: (id: string) => `${ROOTS.TRANSACTIONS}/${id}/view`,
+    categoryEdit: (id: string) => `${ROOTS.TRANSACTIONS}/${id}/edit`,
   },
-  // MANUFACTURERS
   manufacturers: {
-    root: ROOTS.MANUFACTURERS,
-    manufacturerCreate: `${ROOTS.MANUFACTURERS}/create`,
-    manufacturerView: (id: string) => `${ROOTS.MANUFACTURERS}/${id}/view`,
-    manufacturerEdit: (id: string) => `${ROOTS.MANUFACTURERS}/${id}/edit`,
+    root: ROOTS.RECIPIENTS,
+    manufacturerCreate: `${ROOTS.RECIPIENTS}/create`,
+    manufacturerView: (id: string) => `${ROOTS.RECIPIENTS}/${id}/view`,
+    manufacturerEdit: (id: string) => `${ROOTS.RECIPIENTS}/${id}/edit`,
   },
-  // ORDERS
   orders: {
-    root: ROOTS.ORDERS,
-    orderDetails: (id: string) => `${ROOTS.ORDERS}/${id}`,
+    root: ROOTS.TRANSFERS,
+    orderDetails: (id: string) => `${ROOTS.TRANSFERS}/${id}`,
   },
 };
