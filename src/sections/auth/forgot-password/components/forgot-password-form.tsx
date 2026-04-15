@@ -17,6 +17,7 @@ import FormProvider from 'src/components/hook-form';
 import { useSendForgotPasswordEmail } from 'src/query/hooks/auth/forgot-password';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
+import { OtpFlowContext, OTP_FLOW_CONTEXT_KEY } from 'src/types/auth-flow';
 import { formatErrorMessage } from 'src/utils/format-error-message';
 
 export default function ForgotPasswordForm() {
@@ -24,6 +25,7 @@ export default function ForgotPasswordForm() {
   const forgotPasswordMutation = useSendForgotPasswordEmail();
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
 
   const ForgotPasswordSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -50,7 +52,18 @@ export default function ForgotPasswordForm() {
         email: data.email,
       });
 
-      if (forgotPasswordRes.success) {
+      if (forgotPasswordRes.responseCode === 'S100000') {
+        const otpContext: OtpFlowContext = {
+          flowType: 'FORGOT_PASSWORD',
+          email: data.email,
+          globalFeatureCode: 'GF_RESET_PASSWORD',
+          identifierValue: 'DEFAULT101',
+          notificationOptionCode: 'EMAIL-101',
+          userType: 1,
+          authToken: forgotPasswordRes.data.token,
+        };
+        sessionStorage.setItem(OTP_FLOW_CONTEXT_KEY, JSON.stringify(otpContext));
+        setDialogMessage(forgotPasswordRes.responseMessage);
         setIsSuccessDialogOpen(true);
         return;
       }
@@ -147,7 +160,7 @@ export default function ForgotPasswordForm() {
               fontWeight: 600,
             }}
           >
-            Temporary Password has been sent to the email address
+            {dialogMessage || 'Temporary Password has been sent to the email address'}
           </Typography>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', px: 3, pb: 3, pt: 0 }}>

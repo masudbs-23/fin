@@ -1,4 +1,5 @@
 import { LogoutOptions, PopupLoginOptions, RedirectLoginOptions } from '@auth0/auth0-react';
+import { LoginResponse } from 'src/types/auth-flow';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +33,7 @@ export type TokenMessageDataType = {
 // ----------------------------------------------------------------------
 
 type CanRemove = {
-  login?: (username: string, password: string) => Promise<void>;
+  login?: (username: string, password: string) => Promise<LoginResponse | void>;
   register?: (
     email: string,
     password: string,
@@ -61,7 +62,7 @@ export type JWTContextType = CanRemove & {
   retryLoading: boolean;
   authenticated: boolean;
   unauthenticated: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<LoginResponse>;
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   logout: () => Promise<void>;
 };

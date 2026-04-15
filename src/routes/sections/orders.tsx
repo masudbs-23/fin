@@ -10,7 +10,7 @@ const OrderDetailsPage = lazy(() => import('src/pages/orders/order-details-page'
 
 export const ordersRoutes = [
   {
-    path: '/orders',
+    path: '/transfers',
     element: (
       <AuthGuard>
         <DashboardLayout>

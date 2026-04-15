@@ -1,12 +1,16 @@
 export const endpoints = {
   auth: {
-    login: '/api/auth/signin',
+    login: '/api/v1/customer/access/token',
     register: '',
     refresh: '/api/admin/auth/refresh',
     logout: '/api/admin/auth/logout',
-    forgotPassword: '/auth/forgot-password',
+    forgotPassword: '/api/v1/customer/forget-password',
     sendEmail: '/api/admin/auth/forgot-password/send-link',
     resetPassword: '/api/admin/auth/forgot-password/new-password',
+    tfaType: (featureCode: string, identifierValue: string, userType: number) =>
+      `/tfa/global/user/features/${featureCode}/${identifierValue}/${userType}/tfa/type`,
+    tfaGenerateOtp: '/tfa/global/users/generate/otp',
+    tfaVerifyOtp: '/tfa/global/user/tfa/verification',
   },
   dashboard: {
     overview: '/api/dashboard/overview',

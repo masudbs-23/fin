@@ -66,12 +66,23 @@ export default function JwtLoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      sessionStorage.removeItem('deviceBindingVerified');
       const loginSubmitRes: any = await login?.(data.email, data.password);
-      if ('data' in loginSubmitRes!) {
-        router.push(returnTo || PATH_AFTER_LOGIN);
-      } else {
-        setErrorMsg(loginSubmitRes?.message);
+      const accountStatus = Number(loginSubmitRes?.data?.accountStatus);
+
+      if (loginSubmitRes?.responseCode?.startsWith('S') && accountStatus === 11) {
+        router.push(paths.auth.deviceBinding);
+        return;
       }
+
+      if (loginSubmitRes?.responseCode?.startsWith('S') && accountStatus === 1) {
+        router.push(returnTo || PATH_AFTER_LOGIN);
+        return;
+      }
+
+      setErrorMsg(
+        loginSubmitRes?.responseMessage || 'Your account is not eligible to access dashboard right now.'
+      );
     } catch (error) {
       if (typeof error.message === 'object') {
         const errorKeys = Object.keys(error?.message!) as any;
@@ -182,7 +193,7 @@ export default function JwtLoginView() {
           mt: 0.5,
           color: '#03BC00',
           fontSize: '16px',
-          fontWeight: 500,
+          fontWeight: 'medium',
           textDecoration: 'none',
           border: 'none',
           '&:hover': {

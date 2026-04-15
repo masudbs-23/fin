@@ -7,11 +7,11 @@ const ROOTS = {
   CATALOG: '/catalog',
   PRODUCTS: '/products',
   CUSTOMERS: '/customers',
-  MANUFACTURERS: '/manufacturers',
-  CATEGORIES: '/categories',
-  TAGS: '/tags',
+  MANUFACTURERS: '/recipients',
+  CATEGORIES: '/transactions',
+  TAGS: '/commissions',
   BRANDS: '/brands',
-  ORDERS: '/orders',
+  ORDERS: '/transfers',
 };
 
 // ----------------------------------------------------------------------
@@ -23,6 +23,7 @@ export const paths = {
     register: `${ROOTS.AUTH}/register`,
     forgotPassword: `${ROOTS.AUTH}/forgot-password`,
     verifyOtp: `${ROOTS.AUTH}/verify-otp`,
+    deviceBinding: `${ROOTS.AUTH}/device-binding`,
     newPassword: (token: string) => `${ROOTS.AUTH}/reset-password/${token}`,
   },
   // PROFILE

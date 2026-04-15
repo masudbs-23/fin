@@ -12,7 +12,7 @@ const ManufacturerEditPage = lazy(() => import('src/pages/catalog/manufacturers/
 
 export const manufacturersRoutes = [
   {
-    path: '/manufacturers',
+    path: '/recipients',
     element: (
       <AuthGuard>
         <DashboardLayout>

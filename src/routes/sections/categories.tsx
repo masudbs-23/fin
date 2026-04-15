@@ -12,7 +12,7 @@ const CategoryEditPage = lazy(() => import('src/pages/catalog/categories/categor
 
 export const categoriesRoutes = [
   {
-    path: '/categories',
+    path: '/transactions',
     element: (
       <AuthGuard>
         <DashboardLayout>

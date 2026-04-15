@@ -4,19 +4,32 @@ import Typography from '@mui/material/Typography';
 import AuthLogoSvg from 'src/assets/auth/Auth_Logo.svg';
 import PhoneSvg from 'src/assets/auth/Phone.svg';
 
-export default function VerifyOtpHeader() {
+type Props = {
+  mode?: 'verify-otp' | 'device-binding';
+  onLogoClick?: () => void;
+};
+
+export default function VerifyOtpHeader({ mode = 'verify-otp', onLogoClick }: Props) {
+  const title = 'Enter Code'
+  const subtitle =
+    mode === 'device-binding'
+      ? 'Enter the OTP sent to your registered email to bind this device'
+      : 'An OTP is sent to this email test***@gmail.com';
+
   return (
     <>
       <Box
         component="img"
         alt="auth logo"
         src={AuthLogoSvg}
+        onClick={onLogoClick}
         sx={{
           width: '100%',
           maxWidth: { xs: 280, sm: 324 },
           height: 'auto',
           aspectRatio: '324 / 80',
           mb: 4,
+          cursor: onLogoClick ? 'pointer' : 'default',
         }}
       />
 
@@ -31,7 +44,7 @@ export default function VerifyOtpHeader() {
             wordBreak: 'break-word',
           }}
         >
-          Enter Code
+          {title}
         </Typography>
         <Typography 
           variant="body1" 
@@ -41,7 +54,7 @@ export default function VerifyOtpHeader() {
             color: '#737A86'
           }}
         >
-          An OTP is sent to this email test***@gmail.com
+          {subtitle}
         </Typography>
       </Stack>
 

@@ -12,7 +12,7 @@ const TagEditPage = lazy(() => import('src/pages/catalog/tags/tag-edit-page'));
 
 export const tagsRoutes = [
   {
-    path: '/tags',
+    path: '/commissions',
     element: (
       <AuthGuard>
         <DashboardLayout>

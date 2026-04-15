@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react';
 
 import axios from 'src/query/api/axios';
 import { endpoints } from 'src/query/api/endpoints';
+import { LoginPayload, LoginResponse } from 'src/types/auth-flow';
 
 import { ActionMapType, AuthStateType, AuthUserType, TokenMessageDataType } from '../../types';
 import { AuthContext } from './auth-context';
@@ -131,6 +132,51 @@ const reducer = (state: AuthStateType, action: ActionsType): AuthStateType => {
 // ----------------------------------------------------------------------
 
 const STORAGE_ACCESS_KEY = 'accessToken';
+const USER_TYPE = 1;
+const AUTH_ACCOUNT_STATUS_KEY = 'authAccountStatus';
+const DEVICE_BINDING_VERIFIED_KEY = 'deviceBindingVerified';
+
+const getDeviceIdentifier = () => {
+  const existingIdentifier = localStorage.getItem('deviceIdentifier');
+  if (existingIdentifier) return existingIdentifier;
+  const newIdentifier = `${Date.now().toString(36)}${Math.random().toString(16).slice(2)}`;
+  localStorage.setItem('deviceIdentifier', newIdentifier);
+  return newIdentifier;
+};
+
+const getIpAddress = () => localStorage.getItem('deviceIp') || '182.48.79.227';
+
+const buildLoginPayload = (email: string, password: string): LoginPayload => {
+  const language = navigator.language || 'en-US';
+  const platform = navigator.platform || 'Windows';
+  const userAgent = navigator.userAgent || '';
+  const os = /Win/i.test(userAgent) ? 'Windows' : 'Unknown';
+  const osVersion = /Windows NT (\d+(?:\.\d+)?)/i.exec(userAgent)?.[1] || '10';
+  const browser = /Chrome/i.test(userAgent) ? 'Chrome' : 'Browser';
+  const deviceIdentifier = getDeviceIdentifier();
+  const deviceIp = getIpAddress();
+
+  return {
+    email,
+    password,
+    userType: USER_TYPE,
+    deviceInfo: {
+      platformType: 2,
+      platformInfo: platform,
+      platformVersion: osVersion,
+      deviceIdentifier,
+      appLanguage: language,
+      appVersionNo: 1,
+      deviceIp,
+      deviceModel: 'Unknown',
+      deviceName: `${browser} on ${os}`,
+      deviceOS: os,
+      deviceOsVersion: osVersion,
+      pushToken: `pushToken_${deviceIdentifier}`,
+    },
+    ipAddress: deviceIp,
+  };
+};
 
 type Props = {
   children: React.ReactNode;
@@ -142,9 +188,28 @@ export function AuthProvider({ children }: Props) {
   const initialize = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem(STORAGE_ACCESS_KEY);
+      const rawAccountStatus = sessionStorage.getItem(AUTH_ACCOUNT_STATUS_KEY);
+      const parsedAccountStatus = rawAccountStatus ? Number(rawAccountStatus) : null;
+      const accountStatusFromStorage = Number.isNaN(parsedAccountStatus) ? null : parsedAccountStatus;
+      const isDeviceBindingVerified = sessionStorage.getItem(DEVICE_BINDING_VERIFIED_KEY) === 'true';
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
+
+        // If login response already told us accountStatus=11 and device binding is not done yet,
+        // skip profile call and keep user in pending-binding state.
+        if (accountStatusFromStorage === 11 && !isDeviceBindingVerified) {
+          dispatch({
+            type: Types.INITIAL,
+            payload: {
+              user: {
+                accessToken,
+                accountStatus: 11,
+              },
+            },
+          });
+          return;
+        }
 
         try {
           // Fetch profile data for the logged-in user
@@ -154,6 +219,8 @@ export function AuthProvider({ children }: Props) {
           const user = {
             ...data,
             accessToken,
+            accountStatus:
+              typeof data?.accountStatus === 'number' ? data.accountStatus : accountStatusFromStorage,
           };
 
           dispatch({
@@ -168,12 +235,15 @@ export function AuthProvider({ children }: Props) {
             payload: {
               user: {
                 accessToken,
+                accountStatus: accountStatusFromStorage,
               },
             },
           });
         }
       } else {
         setSession(null);
+        sessionStorage.removeItem(AUTH_ACCOUNT_STATUS_KEY);
+        sessionStorage.removeItem(DEVICE_BINDING_VERIFIED_KEY);
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -231,28 +301,37 @@ export function AuthProvider({ children }: Props) {
   }, []);
 
   // LOGIN
-  const login = useCallback(async (username: string, password: string) => {
-    const data = {
-      username,
-      password,
-    };
+  const login = useCallback(async (email: string, password: string) => {
+    const payload = buildLoginPayload(email, password);
 
-    const res = await axios.post(endpoints.auth.login, data);
-    const { token } = res.data.data;
-    // Store single access token only
-    setSession(token);
+    const res = await axios.post(endpoints.auth.login, payload);
+    const loginResponse = res.data as LoginResponse;
+    const token = loginResponse?.data?.token;
+    const accountStatus = loginResponse?.data?.accountStatus;
 
-    dispatch({
-      type: Types.LOGIN,
-      payload: {
-        user: {
-          accessToken: token,
-          isValid: true,
+    if (loginResponse?.responseCode?.startsWith('S') && token) {
+      if (typeof accountStatus === 'number') {
+        sessionStorage.setItem(AUTH_ACCOUNT_STATUS_KEY, String(accountStatus));
+      }
+
+      // Store single access token only
+      setSession(token);
+
+      dispatch({
+        type: Types.LOGIN,
+        payload: {
+          user: {
+            accessToken: token,
+            isValid: true,
+            accountStatus,
+            email: loginResponse.data.email,
+          },
         },
-      },
-    });
-    await initialize();
-    return res.data;
+      });
+      await initialize();
+    }
+
+    return loginResponse;
   }, []);
 
   // REGISTER
@@ -295,6 +374,8 @@ export function AuthProvider({ children }: Props) {
       }
     }
     setSession(null);
+    sessionStorage.removeItem(AUTH_ACCOUNT_STATUS_KEY);
+    sessionStorage.removeItem(DEVICE_BINDING_VERIFIED_KEY);
     dispatch({
       type: Types.LOGOUT,
     });

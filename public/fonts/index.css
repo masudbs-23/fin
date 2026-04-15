@@ -18,9 +18,31 @@
   font-style: normal;
   src: local('CircularStd'), url('CircularStd-Bold.otf') format('opentype');
 } */
+/* Roboto Font Face Declarations */
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400;
+  font-style: normal;
+  src: url('Roboto-Regular.ttf') format('truetype');
+  font-display: swap;
+}
 
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 600;
+  font-style: normal;
+  src: url('Roboto-SemiBold.ttf') format('truetype');
+  font-display: swap;
+}
 
-/* Avenir Font Face Declarations */
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 700;
+  font-style: normal;
+  src: url('Roboto-Bold.ttf') format('truetype');
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'Avenir LT Std';
   src: url('./fonts/AvenirLTStd-Light.otf') format('opentype');

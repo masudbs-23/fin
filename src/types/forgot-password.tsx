@@ -28,8 +28,7 @@ export interface ForgotPasswordResponse {
   responseCode: string;
   responseMessage: string;
   data: {
-    tokenSessionId: string;
-    otpValidityInMinute: number;
+    token: string;
   };
   success: boolean;
 }

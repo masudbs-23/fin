@@ -2,7 +2,8 @@ import { paths } from 'src/routes/paths';
 
 const { VITE_PROJECT_NAME, VITE_HOST_API } = import.meta.env;
 
-export const HOST_API = VITE_HOST_API || 'https://bs-commerce.onrender.com';
+export const HOST_API =
+  VITE_HOST_API || 'https://remittance-customer-gateway.global.fintech23.xyz';
 // Replace "Shanta AML Back Office" with "Monifly"
 export const PROJECT_NAME = VITE_PROJECT_NAME?.replace(/Shanta AML Back Office/gi, 'Monifly')?.replace(/Shanta AML/gi, 'Monifly') || 'Monifly';
 

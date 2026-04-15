@@ -86,17 +86,32 @@ export default function CommissionListView() {
   const { data: commissionListResponse } = useGetCommissionList(filters, false);
 
   const inputSx = {
+    width: '288px',
     '& .MuiOutlinedInput-root': {
-      height: 44,
+      height: 40,
       borderRadius: '8px',
       bgcolor: '#FFFFFF',
-      '& fieldset': { borderColor: '#D0D5DD' },
-      '&:hover fieldset': { borderColor: '#D0D5DD' },
-      '&.Mui-focused fieldset': { borderColor: '#03BC00' },
+      '& fieldset': { 
+        borderColor: '#D5D7DA',
+        borderWidth: '1px'
+      },
+      '&:hover fieldset': { 
+        borderColor: '#D5D7DA',
+        borderWidth: '1px'
+      },
+      '&.Mui-focused fieldset': { 
+        borderColor: '#03BC00',
+        borderWidth: '1px'
+      },
     },
     '& .MuiInputBase-input': {
       fontSize: 14,
-      color: '#667085',
+      color: '#010002',
+      height: 40,
+      py: 0,
+      paddingLeft: '14px',
+      boxSizing: 'border-box',
+      textAlign: 'left',
     },
   };
 
@@ -111,7 +126,7 @@ export default function CommissionListView() {
   }, [commissionListResponse?.data?.list, filters.customerMobileNumber]);
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, md: 2 }, pt: 0.5 }}>
+    <>
       <Stack spacing={2.5}>
         <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E', lineHeight: 1.2 }}>
           Commission
@@ -172,7 +187,7 @@ export default function CommissionListView() {
               </IconButton>
               <IconButton
                 sx={{
-                  width: 48,
+                  width: 44,
                   height: 40,
                   borderRadius: '12px',
                   bgcolor: '#03BC00',
@@ -203,12 +218,12 @@ export default function CommissionListView() {
           <Table sx={{ minWidth: 980 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: '#F9FAFB' }}>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Transaction ID</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Date & Time</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Amount</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Name</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Mobile</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Total Commission</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Transaction ID</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Date & Time</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Amount</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Customer Name</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Customer Mobile</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Total Commission</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -236,6 +251,6 @@ export default function CommissionListView() {
           </Table>
         </Box>
       </Stack>
-    </Container>
+    </>
   );
 }

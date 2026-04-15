@@ -10,6 +10,7 @@ import { SplashScreen } from 'src/components/loading-screen';
 const LoginPage = lazy(() => import('src/pages/auth/login'));
 const ForgotPasswordPage = lazy(() => import('src/pages/auth/forgot-password'));
 const VerifyOtpPage = lazy(() => import('src/pages/auth/verify-otp'));
+const DeviceBindingPage = lazy(() => import('src/pages/auth/device-binding'));
 const NewPasswordPage = lazy(() => import('src/pages/auth/new-password'));
 
 const auth = {
@@ -46,6 +47,16 @@ const auth = {
         <GuestGuard>
           <AuthClassicLayout>
             <VerifyOtpPage />
+          </AuthClassicLayout>
+        </GuestGuard>
+      ),
+    },
+    {
+      path: 'device-binding',
+      element: (
+        <GuestGuard>
+          <AuthClassicLayout>
+            <DeviceBindingPage />
           </AuthClassicLayout>
         </GuestGuard>
       ),

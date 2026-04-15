@@ -23,18 +23,37 @@ export default function GuestGuard({ children }: Props) {
 
 function Container({ children }: Props) {
   const router = useRouter();
+  const AUTH_ACCOUNT_STATUS_KEY = 'authAccountStatus';
 
   const searchParams = useSearchParams();
 
   const returnTo = searchParams.get('returnTo') || paths.dashboard.root;
 
-  const { authenticated } = useAuthContext();
+  const { authenticated, user } = useAuthContext();
 
   const check = useCallback(() => {
     if (authenticated) {
+      const accountStatusFromUser = user?.accountStatus;
+      const accountStatusFromStorage = Number(sessionStorage.getItem(AUTH_ACCOUNT_STATUS_KEY));
+      let resolvedAccountStatus: number | null = null;
+      if (typeof accountStatusFromUser === 'number') {
+        resolvedAccountStatus = accountStatusFromUser;
+      } else if (!Number.isNaN(accountStatusFromStorage)) {
+        resolvedAccountStatus = accountStatusFromStorage;
+      }
+      const needsDeviceBinding = resolvedAccountStatus === 11;
+      const isDeviceBindingRoute = window.location.pathname === paths.auth.deviceBinding;
+      const isDeviceBound = sessionStorage.getItem('deviceBindingVerified') === 'true';
+
+      if (needsDeviceBinding && !isDeviceBound) {
+        if (!isDeviceBindingRoute) {
+          router.replace(paths.auth.deviceBinding);
+        }
+        return;
+      }
       router.replace(returnTo);
     }
-  }, [authenticated, returnTo, router]);
+  }, [authenticated, returnTo, router, user, AUTH_ACCOUNT_STATUS_KEY]);
 
   useEffect(() => {
     check();

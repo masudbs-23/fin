@@ -65,22 +65,43 @@ export default function TransactionsListView() {
   }, [filters, transactionListResponse?.data?.list]);
 
   const inputSx = {
+    width: '288px',
     '& .MuiOutlinedInput-root': {
-      height: 44,
+      height: 40,
       borderRadius: '8px',
       bgcolor: '#FFFFFF',
-      '& fieldset': { borderColor: '#D0D5DD' },
-      '&:hover fieldset': { borderColor: '#D0D5DD' },
-      '&.Mui-focused fieldset': { borderColor: '#03BC00' },
+      '& fieldset': { 
+        borderColor: '#D5D7DA',
+        borderWidth: '1px'
+      },
+      '&:hover fieldset': { 
+        borderColor: '#D5D7DA',
+        borderWidth: '1px'
+      },
+      '&.Mui-focused fieldset': { 
+        borderColor: '#03BC00',
+        borderWidth: '1px'
+      },
     },
     '& .MuiInputBase-input': {
       fontSize: 14,
-      color: '#667085',
+      color: '#010002',
+      height: 40,
+      py: 0,
+      paddingLeft: '14px',
+      boxSizing: 'border-box',
+      textAlign: 'left',
+    },
+    '& .MuiSelect-select': {
+      textAlign: 'left',
+      paddingLeft: '14px !important',
+      display: 'flex',
+      alignItems: 'center',
     },
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, md: 2 }, pt: 0.5 }}>
+    <>
       <Stack spacing={2.5}>
         <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E', lineHeight: 1.2 }}>
           Transactions
@@ -151,7 +172,7 @@ export default function TransactionsListView() {
                 </IconButton>
                 <IconButton
                   sx={{
-                    width: 48,
+                    width: 44,
                     height: 40,
                     borderRadius: '12px',
                     bgcolor: '#03BC00',
@@ -215,22 +236,22 @@ export default function TransactionsListView() {
             bgcolor: '#FFFFFF',
           }}
         >
-          <Typography sx={{ fontSize: 16, fontWeight: 500, color: '#191B1E' }}>Transaction List</Typography>
+          <Typography sx={{ fontSize: '16px !important', fontWeight: 500, color: '#010002' }}>Transaction List</Typography>
         </Box>
 
         <Box sx={{ overflowX: 'auto' }}>
           <Table sx={{ minWidth: 1120 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: '#F9FAFB' }}>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Transaction ID</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Date & Time</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Mobile</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Recipient Mobile</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Amount</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Exchange Rate</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Payout Method</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Status</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Action</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Transaction ID</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Date & Time</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Customer Mobile</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Recipient Mobile</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Amount</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Exchange Rate</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Payout Method</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Status</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -248,15 +269,15 @@ export default function TransactionsListView() {
                       },
                     }}
                   >
-                    <TableCell sx={{ color: '#14532D !important', fontWeight: 600 }}>
+                    <TableCell sx={{ color: '#00311E !important', fontWeight: 600, fontSize: '12.48px !important' }}>
                       {row.transactionId}
                     </TableCell>
-                    <TableCell>{row.dateTime}</TableCell>
-                    <TableCell sx={{ color: '#101828 !important' }}>{row.customerMobile}</TableCell>
-                    <TableCell sx={{ color: '#101828 !important' }}>{row.recipientMobile}</TableCell>
-                    <TableCell>{row.amount}</TableCell>
-                    <TableCell>{row.exchangeRate}</TableCell>
-                    <TableCell>{row.payoutMethod}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400 }}>{row.dateTime}</TableCell>
+                    <TableCell sx={{ color: '#010002 !important', fontSize: '13.6px ', fontWeight: 400 }}>{row.customerMobile}</TableCell>
+                    <TableCell sx={{ color: '#010002 !important', fontSize: '13.6px ', fontWeight: 400 }}>{row.recipientMobile}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400   }}>{row.amount}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400 }}>{row.exchangeRate}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400 }}>{row.payoutMethod}</TableCell>
                     <TableCell>
                       <Chip
                         label={row.status}
@@ -411,6 +432,6 @@ export default function TransactionsListView() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </>
   );
 }

@@ -11,10 +11,9 @@ import {
 
 const FORGOT_PASSWORD_DUMMY_RESPONSE: ForgotPasswordResponse = {
   responseCode: 'S100000',
-  responseMessage: 'OTP generated successfully',
+  responseMessage: 'If an account with this email exists, you will receive an OTP shortly.',
   data: {
-    tokenSessionId: '1776072295326255d724e23034e7aa2f435df18cfea01',
-    otpValidityInMinute: 1,
+    token: 'dummy-forgot-password-token',
   },
   success: true,
 };
@@ -23,15 +22,14 @@ export const sendForgotPasswordEmail = async (
   userData: ForgotPasswordPayload
 ): Promise<ForgotPasswordResponse> => {
   try {
-    const response = await axios({
-      method: 'POST',
-      url: endpoints.auth.forgotPassword,
-      data: userData,
-    });
-
-    return response.data?.data || response.data;
+    const response = await axios.post(endpoints.auth.forgotPassword, userData);
+    const apiResponse = response.data as ForgotPasswordResponse;
+    if (apiResponse?.responseCode && apiResponse?.data?.token) {
+      return apiResponse;
+    }
+    return FORGOT_PASSWORD_DUMMY_RESPONSE;
   } catch (error: any) {
-    console.error('Error in sendForgotPasswordEmail, using dummy response:', error);
+    console.error('Error in sendForgotPasswordEmail, fallback response:', error);
     return FORGOT_PASSWORD_DUMMY_RESPONSE;
   }
 };

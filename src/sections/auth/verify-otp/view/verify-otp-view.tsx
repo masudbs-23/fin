@@ -1,14 +1,22 @@
+import { useState } from 'react';
 import {
   VerifyOtpForm,
   VerifyOtpHeader,
 } from 'src/sections/auth/verify-otp/components';
 
-export default function VerifyOtpView() {
+type Props = {
+  mode?: 'verify-otp' | 'device-binding';
+  onExitToLogin?: () => void;
+};
+
+export default function VerifyOtpView({ mode = 'verify-otp', onExitToLogin }: Props) {
+  const [isSetPasswordStep, setIsSetPasswordStep] = useState(false);
+
   return (
     <>
-      <VerifyOtpHeader />
+      {!isSetPasswordStep && <VerifyOtpHeader mode={mode} onLogoClick={onExitToLogin} />}
 
-      <VerifyOtpForm />
+      <VerifyOtpForm mode={mode} onSetPasswordStepChange={setIsSetPasswordStep} />
     </>
   );
 }
