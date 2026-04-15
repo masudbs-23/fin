@@ -12,15 +12,20 @@ import Iconify from 'src/components/iconify';
 import AppAreaInstalled from 'src/components/overview/app-area-installed';
 import { useGetDashboardOverview } from 'src/query/hooks/dashboard';
 
+import CustomerIcon from 'src/assets/dashbaord/Customer.svg';
+import TransactionIcon from 'src/assets/dashbaord/Transaction.svg';
+import CommissionIcon from 'src/assets/dashbaord/Commission.svg';
+import CustomerRequestIcon from 'src/assets/dashbaord/Customer_Request.svg';
+
 // ----------------------------------------------------------------------
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const STAT_CARD_STYLES = [
-  { icon: 'solar:users-group-rounded-bold', iconBg: '#EAF4FF', iconColor: '#3B82F6' },
-  { icon: 'solar:arrow-right-up-linear', iconBg: '#F4EEFF', iconColor: '#8B5CF6' },
-  { icon: 'solar:wallet-money-bold', iconBg: '#EAFCEE', iconColor: '#16A34A' },
-  { icon: 'solar:document-text-bold', iconBg: '#FFF2EB', iconColor: '#FF6A39' },
-  { icon: 'solar:user-rounded-bold', iconBg: '#EFF4FF', iconColor: '#4A77FF' },
+  { icon: CustomerIcon, iconBg: '#EAF4FF', iconColor: '#3B82F6' },
+  { icon: TransactionIcon, iconBg: '#F4EEFF', iconColor: '#8B5CF6' },
+  { icon: CommissionIcon, iconBg: '#EAFCEE', iconColor: '#16A34A' },
+  { icon: CustomerRequestIcon, iconBg: '#FFF2EB', iconColor: '#FF6A39' },
+  { icon: CustomerIcon, iconBg: '#EFF4FF', iconColor: '#4A77FF' },
 ];
 const DEFAULT_STAT_CARDS = [
   {
@@ -144,7 +149,14 @@ function StatCard({
               mt: compact ? 0 : 0.2,
             }}
           >
-            <Iconify icon={icon} width={20} />
+            <Box
+              component="img"
+              src={icon}
+              sx={{
+                width: 40,
+                height: 40,
+              }}
+            />
           </Stack>
 
           <Stack spacing={0.2} sx={{ minWidth: 0, flex: 1 }}>
