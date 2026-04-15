@@ -2,7 +2,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import DownloadIcon from '@mui/icons-material/Download';
 import {
   Box,
-  Grid,
   IconButton,
   Stack,
   Table,
@@ -13,6 +12,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { useGetCommissionList } from 'src/query/hooks/commission';
 import { CommissionListItem } from 'src/types/commission';
@@ -134,24 +135,44 @@ export default function CommissionListView() {
           <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', height: '100%' }}>
             <Box sx={{ flex: 1 }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>From Date</Typography>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="dd/mm/yyyy"
-                value={filters.fromDate}
-                onChange={(event) => setFilters((prev) => ({ ...prev, fromDate: event.target.value }))}
-                sx={inputSx}
+              <DatePicker
+                value={filters.fromDate ? dayjs(filters.fromDate) : null}
+                onChange={(date) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    fromDate: date && dayjs(date).isValid() ? dayjs(date).format('YYYY-MM-DD') : '',
+                  }))
+                }
+                format="DD/MM/YYYY"
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    size: 'small',
+                    placeholder: 'dd/mm/yyyy',
+                    sx: inputSx,
+                  },
+                }}
               />
             </Box>
             <Box sx={{ flex: 1 }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>To Date</Typography>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="dd/mm/yyyy"
-                value={filters.toDate}
-                onChange={(event) => setFilters((prev) => ({ ...prev, toDate: event.target.value }))}
-                sx={inputSx}
+              <DatePicker
+                value={filters.toDate ? dayjs(filters.toDate) : null}
+                onChange={(date) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    toDate: date && dayjs(date).isValid() ? dayjs(date).format('YYYY-MM-DD') : '',
+                  }))
+                }
+                format="DD/MM/YYYY"
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    size: 'small',
+                    placeholder: 'dd/mm/yyyy',
+                    sx: inputSx,
+                  },
+                }}
               />
             </Box>
             <Box sx={{ flex: 1 }}>

@@ -22,6 +22,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { useGetTransactionDetails, useGetTransactionList } from 'src/query/hooks/transaction';
 
@@ -112,13 +114,23 @@ export default function TransactionsListView() {
             <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end' }}>
               <Box sx={{ flex: 1 }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Date</Typography>
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="dd/mm/yyyy"
-                  value={filters.date}
-                  onChange={(event) => setFilters((prev) => ({ ...prev, date: event.target.value }))}
-                  sx={inputSx}
+                <DatePicker
+                  value={filters.date ? dayjs(filters.date) : null}
+                  onChange={(date) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      date: date && dayjs(date).isValid() ? dayjs(date).format('YYYY-MM-DD') : '',
+                    }))
+                  }
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      size: 'small',
+                      placeholder: 'dd/mm/yyyy',
+                      sx: inputSx,
+                    },
+                  }}
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
