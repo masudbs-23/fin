@@ -67,6 +67,7 @@ export default function JwtLoginView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       sessionStorage.removeItem('deviceBindingVerified');
+      localStorage.removeItem('isLoginAFterDeviceBinding');
       const loginSubmitRes: any = await login?.(data.email, data.password);
       const accountStatus = Number(loginSubmitRes?.data?.accountStatus);
 

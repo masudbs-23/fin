@@ -108,7 +108,17 @@ export const bindDevice = async (
     const response = await axios.post(endpoints.auth.deviceBinding, payload, {
       headers: getHeaders(authToken),
     });
-    return response.data?.responseCode ? response.data : DUMMY_DEVICE_BINDING_RESPONSE;
+    const data = response.data as Partial<DeviceBindingResponse> | undefined;
+    if (!data?.responseCode) {
+      return DUMMY_DEVICE_BINDING_RESPONSE;
+    }
+
+    return {
+      responseCode: data.responseCode,
+      responseMessage: data.responseMessage || 'Operation successful',
+      success: typeof data.success === 'boolean' ? data.success : data.responseCode === 'S100000',
+      data: data.data,
+    };
   } catch (error) {
     console.error('Error in bindDevice, using dummy response:', error);
     return DUMMY_DEVICE_BINDING_RESPONSE;

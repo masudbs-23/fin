@@ -15,6 +15,7 @@ const loginPaths: Record<string, string> = {
 };
 const DEVICE_BINDING_VERIFIED_KEY = 'deviceBindingVerified';
 const AUTH_ACCOUNT_STATUS_KEY = 'authAccountStatus';
+const LOGIN_AFTER_DEVICE_BINDING_KEY = 'isLoginAFterDeviceBinding';
 
 // ----------------------------------------------------------------------
 
@@ -64,8 +65,9 @@ function Container({ children }: Props) {
       }
       const needsDeviceBinding = resolvedAccountStatus === 11;
       const isDeviceBound = sessionStorage.getItem(DEVICE_BINDING_VERIFIED_KEY) === 'true';
+      const isLoginAfterDeviceBinding = localStorage.getItem(LOGIN_AFTER_DEVICE_BINDING_KEY) === 'true';
 
-      if (needsDeviceBinding && !isDeviceBound) {
+      if (needsDeviceBinding && !isDeviceBound && !isLoginAfterDeviceBinding) {
         router.replace(paths.auth.deviceBinding);
         return;
       }

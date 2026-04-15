@@ -3,6 +3,7 @@ import { setSession } from 'src/auth/context/jwt/utils';
 const AUTH_ACCOUNT_STATUS_KEY = 'authAccountStatus';
 const DEVICE_BINDING_VERIFIED_KEY = 'deviceBindingVerified';
 const OTP_FLOW_CONTEXT_KEY = 'otpFlowContext';
+const LOGIN_AFTER_DEVICE_BINDING_KEY = 'isLoginAFterDeviceBinding';
 
 export const clearAuthClientState = () => {
   clearAuthClientStateWithOptions();
@@ -24,6 +25,7 @@ export const clearAuthClientStateWithOptions = ({ clearAllStorage = false }: Cle
     sessionStorage.removeItem(AUTH_ACCOUNT_STATUS_KEY);
     sessionStorage.removeItem(DEVICE_BINDING_VERIFIED_KEY);
     sessionStorage.removeItem(OTP_FLOW_CONTEXT_KEY);
+    localStorage.removeItem(LOGIN_AFTER_DEVICE_BINDING_KEY);
   }
 
   // Notify auth provider to drop in-memory user state immediately.

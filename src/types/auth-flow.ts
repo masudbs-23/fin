@@ -116,7 +116,7 @@ export interface DeviceBindingPayload {
 export interface DeviceBindingResponse {
   responseCode: string;
   responseMessage: string;
-  success: boolean;
+  success?: boolean;
   data?: Record<string, unknown>;
 }
 

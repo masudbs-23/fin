@@ -135,6 +135,7 @@ const STORAGE_ACCESS_KEY = 'accessToken';
 const USER_TYPE = 1;
 const AUTH_ACCOUNT_STATUS_KEY = 'authAccountStatus';
 const DEVICE_BINDING_VERIFIED_KEY = 'deviceBindingVerified';
+const LOGIN_AFTER_DEVICE_BINDING_KEY = 'isLoginAFterDeviceBinding';
 
 const getDeviceIdentifier = () => {
   const existingIdentifier = localStorage.getItem('deviceIdentifier');
@@ -200,13 +201,14 @@ export function AuthProvider({ children }: Props) {
       const parsedAccountStatus = rawAccountStatus ? Number(rawAccountStatus) : null;
       const accountStatusFromStorage = Number.isNaN(parsedAccountStatus) ? null : parsedAccountStatus;
       const isDeviceBindingVerified = sessionStorage.getItem(DEVICE_BINDING_VERIFIED_KEY) === 'true';
+      const isLoginAfterDeviceBinding = localStorage.getItem(LOGIN_AFTER_DEVICE_BINDING_KEY) === 'true';
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
         // If login response already told us accountStatus=11 and device binding is not done yet,
         // skip profile call and keep user in pending-binding state.
-        if (accountStatusFromStorage === 11 && !isDeviceBindingVerified) {
+        if (accountStatusFromStorage === 11 && !isDeviceBindingVerified && !isLoginAfterDeviceBinding) {
           dispatch({
             type: Types.INITIAL,
             payload: {
@@ -252,6 +254,7 @@ export function AuthProvider({ children }: Props) {
         setSession(null);
         sessionStorage.removeItem(AUTH_ACCOUNT_STATUS_KEY);
         sessionStorage.removeItem(DEVICE_BINDING_VERIFIED_KEY);
+        localStorage.removeItem(LOGIN_AFTER_DEVICE_BINDING_KEY);
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -384,6 +387,7 @@ export function AuthProvider({ children }: Props) {
     setSession(null);
     sessionStorage.removeItem(AUTH_ACCOUNT_STATUS_KEY);
     sessionStorage.removeItem(DEVICE_BINDING_VERIFIED_KEY);
+    localStorage.removeItem(LOGIN_AFTER_DEVICE_BINDING_KEY);
     dispatch({
       type: Types.LOGOUT,
     });

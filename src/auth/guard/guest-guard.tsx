@@ -24,6 +24,7 @@ export default function GuestGuard({ children }: Props) {
 function Container({ children }: Props) {
   const router = useRouter();
   const AUTH_ACCOUNT_STATUS_KEY = 'authAccountStatus';
+  const LOGIN_AFTER_DEVICE_BINDING_KEY = 'isLoginAFterDeviceBinding';
 
   const searchParams = useSearchParams();
 
@@ -44,8 +45,9 @@ function Container({ children }: Props) {
       const needsDeviceBinding = resolvedAccountStatus === 11;
       const isDeviceBindingRoute = window.location.pathname === paths.auth.deviceBinding;
       const isDeviceBound = sessionStorage.getItem('deviceBindingVerified') === 'true';
+      const isLoginAfterDeviceBinding = localStorage.getItem(LOGIN_AFTER_DEVICE_BINDING_KEY) === 'true';
 
-      if (needsDeviceBinding && !isDeviceBound) {
+      if (needsDeviceBinding && !isDeviceBound && !isLoginAfterDeviceBinding) {
         if (!isDeviceBindingRoute) {
           router.replace(paths.auth.deviceBinding);
         }
@@ -53,7 +55,7 @@ function Container({ children }: Props) {
       }
       router.replace(returnTo);
     }
-  }, [authenticated, returnTo, router, user, AUTH_ACCOUNT_STATUS_KEY]);
+  }, [authenticated, returnTo, router, user, AUTH_ACCOUNT_STATUS_KEY, LOGIN_AFTER_DEVICE_BINDING_KEY]);
 
   useEffect(() => {
     check();

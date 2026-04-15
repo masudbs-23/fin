@@ -26,6 +26,7 @@ type Props = {
   onSetPasswordStepChange?: (isSetPasswordStep: boolean) => void;
 };
 const DEVICE_BINDING_VERIFIED_KEY = 'deviceBindingVerified';
+const LOGIN_AFTER_DEVICE_BINDING_KEY = 'isLoginAFterDeviceBinding';
 
 const readOtpContext = (): OtpFlowContext | null => {
   const raw = sessionStorage.getItem(OTP_FLOW_CONTEXT_KEY);
@@ -297,13 +298,16 @@ export default function VerifyOtpForm({
               authToken: otpContext.authToken || getAccessToken(),
             });
 
-            if (!bindResponse.success || bindResponse.responseCode !== 'S100000') {
+            const isBindingSuccess =
+              bindResponse.responseCode === 'S100000' || bindResponse.success === true;
+            if (!isBindingSuccess) {
               setErrorMsg(bindResponse.responseMessage || 'Device binding failed');
               return;
             }
 
             enqueueSnackbar(bindResponse.responseMessage, { variant: 'success' });
             sessionStorage.setItem(DEVICE_BINDING_VERIFIED_KEY, 'true');
+            localStorage.setItem(LOGIN_AFTER_DEVICE_BINDING_KEY, 'true');
             sessionStorage.removeItem(OTP_FLOW_CONTEXT_KEY);
             router.push(paths.dashboard.root);
             return;
