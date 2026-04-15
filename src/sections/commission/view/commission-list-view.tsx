@@ -82,8 +82,7 @@ export default function CommissionListView() {
     customerMobileNumber: '',
   });
 
-  // Keep hook ready for API integration; UI currently renders mock rows by design.
-  const { data: commissionListResponse } = useGetCommissionList(filters, false);
+  const { data: commissionListResponse } = useGetCommissionList(filters);
 
   const inputSx = {
     width: '288px',
@@ -117,7 +116,7 @@ export default function CommissionListView() {
 
   const rows = useMemo(() => {
     const apiRows = commissionListResponse?.data?.list || [];
-    const list = MOCK_COMMISSION_ROWS.length ? MOCK_COMMISSION_ROWS : apiRows;
+    const list = apiRows.length ? apiRows : MOCK_COMMISSION_ROWS;
     return list.filter((row) =>
       filters.customerMobileNumber
         ? row.customerMobile.toLowerCase().includes(filters.customerMobileNumber.toLowerCase())

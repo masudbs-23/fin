@@ -35,7 +35,7 @@ export const endpoints = {
     details: (transactionId: string) => `/api/transactions/${transactionId}`,
   },
   commissions: {
-    list: '/api/commissions',
+    list: '/commissions',
   },
   profile: {
     changePassword: '/api/admin/auth/change-password',
