@@ -104,7 +104,7 @@ export default function TransactionsListView() {
   return (
     <>
       <Stack spacing={2.5}>
-        <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E', lineHeight: 1.2 }}>
+        <Typography sx={{ fontSize: 18, fontWeight: 500, color: '#191B1E', lineHeight: 1.2 }}>
           Transactions
         </Typography>
 
@@ -246,7 +246,7 @@ export default function TransactionsListView() {
             height: 38,
             display: 'flex',
             alignItems: 'center',
-            px: 0.75,
+
             borderRadius: '10px',
             bgcolor: '#FFFFFF',
           }}

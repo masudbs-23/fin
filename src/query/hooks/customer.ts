@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createCustomer, getCustomerList, updateCustomer } from 'src/query/api/services/customer';
+import { createCustomer, getCustomerDetails, getCustomerList, updateCustomer } from 'src/query/api/services/customer';
 import { QUERY_KEY } from 'src/query/lib/query-keys';
 import {
   CreateCustomerPayload,
@@ -15,6 +15,13 @@ export const useGetCustomerList = (params?: CustomerListPayload, enabled: boolea
     queryKey: [QUERY_KEY.CUSTOMER_LIST, params],
     queryFn: () => getCustomerList(params),
     enabled,
+  });
+
+export const useGetCustomerDetails = (customerId?: string, enabled: boolean = true) =>
+  useQuery<Customer>({
+    queryKey: [QUERY_KEY.CUSTOMER_DETAILS, customerId],
+    queryFn: () => getCustomerDetails(customerId || ''),
+    enabled: !!customerId && enabled,
   });
 
 export const useUpdateCustomer = () => {

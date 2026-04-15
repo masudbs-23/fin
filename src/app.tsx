@@ -2,7 +2,6 @@ import 'src/global.css';
 
 import { AuthProvider } from 'src/auth/context/jwt';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
-import ProgressBar from 'src/components/progress-bar';
 import { SettingsDrawer, SettingsProvider } from 'src/components/settings';
 import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 import OrganizationProviderWrapper from 'src/organization/providers/organization-provider';
@@ -41,7 +40,6 @@ export default function App() {
                   <EnvironmentBanner />
                   {/* <BusinessDateBanner /> */}
                   <SettingsDrawer />
-                  <ProgressBar />
                   <GlobalErrorHandler />
                   <SnackbarProvider>
                     <Router />

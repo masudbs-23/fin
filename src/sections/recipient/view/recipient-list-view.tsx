@@ -202,10 +202,10 @@ export default function RecipientListView() {
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, md: 2 }, pt: 0.5 }}>
+    <>
       <Stack spacing={2.5}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E' }}>Recipient</Typography>
+          <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#191B1E' }}>Recipient</Typography>
           <Button
             variant="contained"
             sx={{
@@ -315,7 +315,6 @@ export default function RecipientListView() {
             height: 22,
             display: 'flex',
             alignItems: 'center',
-            px: 0.75,
             borderRadius: '10px',
             bgcolor: '#FFFFFF',
           }}
@@ -501,6 +500,6 @@ export default function RecipientListView() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </>
   );
 }

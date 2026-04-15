@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Chip,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -25,8 +24,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
-import { useCreateCustomer, useGetCustomerList, useUpdateCustomer } from 'src/query/hooks/customer';
+import { useEffect, useMemo, useState } from 'react';
+import * as yup from 'yup';
+import { useCreateCustomer, useGetCustomerDetails, useGetCustomerList, useUpdateCustomer } from 'src/query/hooks/customer';
 import { CreateCustomerPayload, Customer, UpdateCustomerPayload } from 'src/types/customers';
 
 const COUNTRIES = ['Bangladesh', 'United States', 'United Kingdom', 'India', 'Pakistan'];
@@ -53,6 +53,38 @@ const INITIAL_CREATE_FORM: CreateCustomerPayload = {
   nationality: '',
   nidDocumentName: '',
   photoDocumentName: '',
+};
+
+const STEP_ONE_SCHEMA = yup.object({
+  firstName: yup.string().trim().required('First name is required'),
+  lastName: yup.string().trim().required('Last name is required'),
+  gender: yup.string().trim().required('Gender is required'),
+  dateOfBirth: yup.string().trim().required('Date of birth is required'),
+});
+
+const STEP_TWO_SCHEMA = yup.object({
+  phoneNumber: yup.string().trim().required('Phone number is required'),
+  email: yup.string().trim().email('Enter a valid email address').required('Email is required'),
+  address: yup.string().trim().required('Address is required'),
+  city: yup.string().trim().required('City is required'),
+  country: yup.string().trim().required('Country is required'),
+});
+
+const STEP_THREE_SCHEMA = yup.object({
+  nidNumber: yup.string().trim().required('NID number is required'),
+  nationality: yup.string().trim().required('Nationality is required'),
+});
+
+const STEP_FOUR_SCHEMA = yup.object({
+  nidDocumentName: yup.string().trim().required('NID document is required'),
+  photoDocumentName: yup.string().trim().required('Photo document is required'),
+});
+
+const CREATE_STEP_SCHEMAS: Record<CreateStep, yup.ObjectSchema<any>> = {
+  1: STEP_ONE_SCHEMA,
+  2: STEP_TWO_SCHEMA,
+  3: STEP_THREE_SCHEMA,
+  4: STEP_FOUR_SCHEMA,
 };
 
 const getStatusColor = (status: string) => (status === 'Active' ? '#B9E8C9' : '#F9D8DA');
@@ -158,13 +190,19 @@ const MOCK_CUSTOMERS: Customer[] = [
 ];
 
 export default function CustomersListView() {
-  const [filters, setFilters] = useState({
+  const defaultFilters = {
     mobileNumber: '',
     nidNumber: '',
     country: '',
+  };
+
+  const [filters, setFilters] = useState({
+    ...defaultFilters,
   });
+  const [appliedFilters, setAppliedFilters] = useState({ ...defaultFilters });
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [createStep, setCreateStep] = useState<CreateStep>(1);
@@ -177,26 +215,35 @@ export default function CustomersListView() {
     address: '',
   });
   const [createForm, setCreateForm] = useState<CreateCustomerPayload>(INITIAL_CREATE_FORM);
+  const [createFormErrors, setCreateFormErrors] = useState<Partial<Record<keyof CreateCustomerPayload, string>>>({});
 
-  // Keep hook ready for API integration; UI currently renders mock rows by design.
-  useGetCustomerList(filters, false);
+  const { data: customerListResponse, refetch: refetchCustomerList } = useGetCustomerList(appliedFilters);
+  const { data: customerDetails } = useGetCustomerDetails(selectedCustomerId, isEditDialogOpen);
   const updateCustomerMutation = useUpdateCustomer();
   const createCustomerMutation = useCreateCustomer();
 
-  const filteredCustomers = useMemo(
-    () =>
-      customers.filter((customer) => {
-        const mobileMatch = filters.mobileNumber
-          ? customer.phoneNumber.toLowerCase().includes(filters.mobileNumber.toLowerCase())
-          : true;
-        const nidMatch = filters.nidNumber
-          ? customer.nidNumber.toLowerCase().includes(filters.nidNumber.toLowerCase())
-          : true;
-        const countryMatch = filters.country ? customer.country === filters.country : true;
-        return mobileMatch && nidMatch && countryMatch;
-      }),
-    [customers, filters]
-  );
+  const filteredCustomers = useMemo(() => customers, [customers]);
+
+  useEffect(() => {
+    const apiCustomers = customerListResponse?.data?.customers || [];
+    if (apiCustomers.length) {
+      setCustomers(apiCustomers);
+    }
+  }, [customerListResponse?.data?.customers]);
+
+  useEffect(() => {
+    if (!customerDetails || !isEditDialogOpen) return;
+
+    setSelectedCustomer(customerDetails);
+    setEditForm({
+      fullName: customerDetails.fullName,
+      phoneNumber: customerDetails.phoneNumber.replace(/^\+88/, ''),
+      email: customerDetails.email,
+      dateOfBirth: customerDetails.dateOfBirth,
+      ekycStatus: customerDetails.ekycStatus,
+      address: customerDetails.address,
+    });
+  }, [customerDetails, isEditDialogOpen]);
 
   const inputSx = {
     '& .MuiOutlinedInput-root': {
@@ -232,10 +279,47 @@ export default function CustomersListView() {
 
   const handleCreateFieldChange = (field: keyof CreateCustomerPayload, value: string) => {
     setCreateForm((prev) => ({ ...prev, [field]: value }));
+    if (createFormErrors[field]) {
+      setCreateFormErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleSearch = async () => {
+    const isSameFilters =
+      appliedFilters.mobileNumber === filters.mobileNumber &&
+      appliedFilters.nidNumber === filters.nidNumber &&
+      appliedFilters.country === filters.country;
+
+    if (isSameFilters) {
+      await refetchCustomerList();
+      return;
+    }
+
+    setAppliedFilters({ ...filters });
+  };
+
+  const validateCreateStep = async (step: CreateStep) => {
+    const schema = CREATE_STEP_SCHEMAS[step];
+
+    try {
+      await schema.validate(createForm, { abortEarly: false });
+      return true;
+    } catch (error) {
+      if (!(error instanceof yup.ValidationError)) return false;
+
+      const nextErrors: Partial<Record<keyof CreateCustomerPayload, string>> = {};
+      error.inner.forEach((issue) => {
+        if (!issue.path || nextErrors[issue.path as keyof CreateCustomerPayload]) return;
+        nextErrors[issue.path as keyof CreateCustomerPayload] = issue.message;
+      });
+      setCreateFormErrors((prev) => ({ ...prev, ...nextErrors }));
+      return false;
+    }
   };
 
   const handleEditClick = (customer: Customer) => {
     setSelectedCustomer(customer);
+    setSelectedCustomerId(customer.id);
     setEditForm({
       fullName: customer.fullName,
       phoneNumber: customer.phoneNumber.replace(/^\+88/, ''),
@@ -279,12 +363,14 @@ export default function CustomersListView() {
         address: selectedCustomer.address,
       });
     }
+    setSelectedCustomerId('');
     setIsEditDialogOpen(false);
   };
 
   const handleCreateCancel = () => {
     setCreateStep(1);
     setCreateForm(INITIAL_CREATE_FORM);
+    setCreateFormErrors({});
     setIsCreateDialogOpen(false);
   };
 
@@ -299,6 +385,9 @@ export default function CustomersListView() {
   };
 
   const handleCreateNext = async () => {
+    const isStepValid = await validateCreateStep(createStep);
+    if (!isStepValid) return;
+
     if (createStep < 4) {
       setCreateStep((prev) => (prev + 1) as CreateStep);
       return;
@@ -307,8 +396,8 @@ export default function CustomersListView() {
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, md: 2 }, pt: 0.5 }}>
-      <Stack spacing={3}>
+    <>
+      <Stack spacing={2.5}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography sx={{ fontSize: 18, fontWeight: 500, color: '#191B1E' }}>Customer</Typography>
           <Button
@@ -316,6 +405,7 @@ export default function CustomersListView() {
             onClick={() => {
               setCreateStep(1);
               setCreateForm(INITIAL_CREATE_FORM);
+              setCreateFormErrors({});
               setIsCreateDialogOpen(true);
             }}
             sx={{
@@ -336,8 +426,8 @@ export default function CustomersListView() {
         </Stack>
 
         <Box>
-          <Grid container spacing={1} alignItems="end">
-            <Grid item xs={12} md={3}>
+          <Grid container spacing={1} alignItems="end" sx={{ width: '100%', m: 0 }}>
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Mobile Number</Typography>
               <TextField
                 fullWidth
@@ -353,7 +443,7 @@ export default function CustomersListView() {
                 sx={inputSx}
               />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>NID Number</Typography>
               <TextField
                 fullWidth
@@ -369,7 +459,7 @@ export default function CustomersListView() {
                 sx={inputSx}
               />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Country</Typography>
               <TextField
                 fullWidth
@@ -393,9 +483,10 @@ export default function CustomersListView() {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
               <Stack direction="row" spacing={1}>
                 <IconButton
+                  onClick={handleSearch}
                   sx={{
                     width: 44,
                     height: 40,
@@ -430,7 +521,6 @@ export default function CustomersListView() {
               height: 51,
               display: 'flex',
               alignItems: 'center',
-              px: 0.75,
               borderRadius: '10px',
               bgcolor: '#FFFFFF',
             }}
@@ -438,98 +528,100 @@ export default function CustomersListView() {
             <Typography sx={{ fontSize: 16, fontWeight: 500, color: '#191B1E' }}>Customer List</Typography>
           </Box>
 
-          <Table sx={{ minWidth: 1120 }}>
-            <TableHead>
-              <TableRow sx={{ bgcolor: '#F9FAFB' }}>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Code</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Name</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Mobile Number</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Email</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Date of Birth</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Status</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>eKYC Status</TableCell>
-                <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredCustomers.map((customer) => {
-                const ekycColor = getEkycColor(customer.ekycStatus);
-                return (
-                  <TableRow
-                    key={customer.id}
-                    sx={{
-                      '& td': {
-                        borderBottom: '0.74px solid #EAECF0',
-                        py: 1.6,
-                        fontSize: 14,
-                        color: '#344054',
-                      },
-                    }}
-                  >
-                    <TableCell>
-                      <Chip
-                        label={customer.customerCode}
-                        sx={{
-                          bgcolor: '#ECFDF3',
-                          color: '#166534',
-                          fontWeight: 600,
-                          borderRadius: '10px',
-                          height: 24,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ color: '#101828 !important', fontWeight: 500 }}>{customer.fullName}</TableCell>
-                    <TableCell>{customer.phoneNumber}</TableCell>
-                    <TableCell>{customer.email}</TableCell>
-                    <TableCell>{customer.dateOfBirth}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={customer.status}
-                        sx={{
-                          bgcolor: getStatusColor(customer.status),
-                          color: getStatusTextColor(customer.status),
-                          fontWeight: 500,
-                          borderRadius: '999px',
-                          height: 24,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={customer.ekycStatus}
-                        sx={{
-                          bgcolor: ekycColor.bg,
-                          color: ekycColor.text,
-                          fontWeight: 500,
-                          borderRadius: '999px',
-                          height: 24,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        size="small"
-                        startIcon={<EditIcon fontSize="small" />}
-                        onClick={() => handleEditClick(customer)}
-                        sx={{
-                          bgcolor: '#9BE6A8',
-                          color: '#14532D',
-                          borderRadius: '10px',
-                          px: 1.4,
-                          height: 34,
-                          fontWeight: 500,
-                          textTransform: 'none',
-                          '&:hover': { bgcolor: '#8AD596' },
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          <Box sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: 1120 }}>
+              <TableHead>
+                <TableRow sx={{ bgcolor: '#F9FAFB' }}>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Customer Code</TableCell>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Name</TableCell>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Mobile Number</TableCell>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Email</TableCell>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Date of Birth</TableCell>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Status</TableCell>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>eKYC Status</TableCell>
+                  <TableCell sx={{ color: '#667085', fontSize: 14, fontWeight: 500 }}>Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredCustomers.map((customer) => {
+                  const ekycColor = getEkycColor(customer.ekycStatus);
+                  return (
+                    <TableRow
+                      key={customer.id}
+                      sx={{
+                        '& td': {
+                          borderBottom: '0.74px solid #EAECF0',
+                          py: 1.6,
+                          fontSize: 14,
+                          color: '#344054',
+                        },
+                      }}
+                    >
+                      <TableCell>
+                        <Chip
+                          label={customer.customerCode}
+                          sx={{
+                            bgcolor: '#ECFDF3',
+                            color: '#166534',
+                            fontWeight: 600,
+                            borderRadius: '10px',
+                            height: 24,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ color: '#101828 !important', fontWeight: 500 }}>{customer.fullName}</TableCell>
+                      <TableCell>{customer.phoneNumber}</TableCell>
+                      <TableCell>{customer.email}</TableCell>
+                      <TableCell>{customer.dateOfBirth}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={customer.status}
+                          sx={{
+                            bgcolor: getStatusColor(customer.status),
+                            color: getStatusTextColor(customer.status),
+                            fontWeight: 500,
+                            borderRadius: '999px',
+                            height: 24,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={customer.ekycStatus}
+                          sx={{
+                            bgcolor: ekycColor.bg,
+                            color: ekycColor.text,
+                            fontWeight: 500,
+                            borderRadius: '999px',
+                            height: 24,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="small"
+                          startIcon={<EditIcon fontSize="small" />}
+                          onClick={() => handleEditClick(customer)}
+                          sx={{
+                            bgcolor: '#9BE6A8',
+                            color: '#14532D',
+                            borderRadius: '10px',
+                            px: 1.4,
+                            height: 34,
+                            fontWeight: 500,
+                            textTransform: 'none',
+                            '&:hover': { bgcolor: '#8AD596' },
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Box>
         </Box>
       </Stack>
 
@@ -822,6 +914,8 @@ export default function CustomersListView() {
                   placeholder="Enter first name"
                   value={createForm.firstName}
                   onChange={(event) => handleCreateFieldChange('firstName', event.target.value)}
+                  error={Boolean(createFormErrors.firstName)}
+                  helperText={createFormErrors.firstName}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -833,6 +927,8 @@ export default function CustomersListView() {
                   placeholder="Enter last name"
                   value={createForm.lastName}
                   onChange={(event) => handleCreateFieldChange('lastName', event.target.value)}
+                  error={Boolean(createFormErrors.lastName)}
+                  helperText={createFormErrors.lastName}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -845,6 +941,8 @@ export default function CustomersListView() {
                   value={createForm.gender}
                   onChange={(event) => handleCreateFieldChange('gender', event.target.value)}
                   SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+                  error={Boolean(createFormErrors.gender)}
+                  helperText={createFormErrors.gender}
                   sx={createDialogInputSx}
                 >
                   <MenuItem value="">Choose</MenuItem>
@@ -863,6 +961,8 @@ export default function CustomersListView() {
                   placeholder="dd/mm/yyyy"
                   value={createForm.dateOfBirth}
                   onChange={(event) => handleCreateFieldChange('dateOfBirth', event.target.value)}
+                  error={Boolean(createFormErrors.dateOfBirth)}
+                  helperText={createFormErrors.dateOfBirth}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -879,6 +979,8 @@ export default function CustomersListView() {
                   placeholder="Enter phone number"
                   value={createForm.phoneNumber}
                   onChange={(event) => handleCreateFieldChange('phoneNumber', event.target.value)}
+                  error={Boolean(createFormErrors.phoneNumber)}
+                  helperText={createFormErrors.phoneNumber}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -890,6 +992,8 @@ export default function CustomersListView() {
                   placeholder="Enter email"
                   value={createForm.email}
                   onChange={(event) => handleCreateFieldChange('email', event.target.value)}
+                  error={Boolean(createFormErrors.email)}
+                  helperText={createFormErrors.email}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -901,6 +1005,8 @@ export default function CustomersListView() {
                   placeholder="enter address"
                   value={createForm.address}
                   onChange={(event) => handleCreateFieldChange('address', event.target.value)}
+                  error={Boolean(createFormErrors.address)}
+                  helperText={createFormErrors.address}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -912,6 +1018,8 @@ export default function CustomersListView() {
                   placeholder="City"
                   value={createForm.city}
                   onChange={(event) => handleCreateFieldChange('city', event.target.value)}
+                  error={Boolean(createFormErrors.city)}
+                  helperText={createFormErrors.city}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -924,6 +1032,8 @@ export default function CustomersListView() {
                   value={createForm.country}
                   onChange={(event) => handleCreateFieldChange('country', event.target.value)}
                   SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+                  error={Boolean(createFormErrors.country)}
+                  helperText={createFormErrors.country}
                   sx={createDialogInputSx}
                 >
                   <MenuItem value="">Choose</MenuItem>
@@ -947,6 +1057,8 @@ export default function CustomersListView() {
                   placeholder="Enter nid number"
                   value={createForm.nidNumber}
                   onChange={(event) => handleCreateFieldChange('nidNumber', event.target.value)}
+                  error={Boolean(createFormErrors.nidNumber)}
+                  helperText={createFormErrors.nidNumber}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -958,6 +1070,8 @@ export default function CustomersListView() {
                   placeholder="Enter nationality"
                   value={createForm.nationality}
                   onChange={(event) => handleCreateFieldChange('nationality', event.target.value)}
+                  error={Boolean(createFormErrors.nationality)}
+                  helperText={createFormErrors.nationality}
                   sx={createDialogInputSx}
                 />
               </Grid>
@@ -995,6 +1109,9 @@ export default function CustomersListView() {
                 {createForm.nidDocumentName && (
                   <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#027A48' }}>{createForm.nidDocumentName}</Typography>
                 )}
+                {!createForm.nidDocumentName && createFormErrors.nidDocumentName && (
+                  <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#D92D20' }}>{createFormErrors.nidDocumentName}</Typography>
+                )}
               </Grid>
               <Grid item xs={12} md={6}>
                 <Button
@@ -1024,6 +1141,9 @@ export default function CustomersListView() {
                 </Button>
                 {createForm.photoDocumentName && (
                   <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#027A48' }}>{createForm.photoDocumentName}</Typography>
+                )}
+                {!createForm.photoDocumentName && createFormErrors.photoDocumentName && (
+                  <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#D92D20' }}>{createFormErrors.photoDocumentName}</Typography>
                 )}
               </Grid>
               <Box
@@ -1100,6 +1220,6 @@ export default function CustomersListView() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </>
   );
 }

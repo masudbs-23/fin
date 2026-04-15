@@ -84,6 +84,25 @@ const CUSTOMER_DUMMY_RESPONSE: CustomerListResponse = {
   },
 };
 
+const getCustomerFromDummy = (customerId: string): Customer => {
+  const existing = CUSTOMER_DUMMY_RESPONSE.data.customers.find((customer) => customer.id === customerId);
+  if (existing) return existing;
+
+  return {
+    id: customerId,
+    customerCode: 'C-10421',
+    fullName: 'Ahmed Hassan',
+    phoneNumber: '+9665512345678',
+    email: 'ahmed.hassan@email.com',
+    dateOfBirth: '1985-06-20',
+    status: 'Active',
+    ekycStatus: 'Completed',
+    country: 'Saudi Arabia',
+    nidNumber: '111223344556',
+    address: 'Riyadh, Olaya',
+  };
+};
+
 export const getCustomerList = async (params?: CustomerListPayload): Promise<CustomerListResponse> => {
   try {
     const response = await axios({
@@ -116,6 +135,27 @@ export const getCustomerList = async (params?: CustomerListPayload): Promise<Cus
   }
 };
 
+export const getCustomerDetails = async (customerId: string): Promise<Customer> => {
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: endpoints.customers.details(customerId),
+    });
+
+    const responseData = response.data;
+
+    if (responseData?.data?.customer?.id) return responseData.data.customer as Customer;
+    if (responseData?.data?.id) return responseData.data as Customer;
+    if (responseData?.customer?.id) return responseData.customer as Customer;
+    if (responseData?.id) return responseData as Customer;
+
+    return getCustomerFromDummy(customerId);
+  } catch (error: any) {
+    console.error('Error in getCustomerDetails, using dummy response:', error);
+    return getCustomerFromDummy(customerId);
+  }
+};
+
 export const updateCustomer = async (
   customerId: string,
   customerPayload: UpdateCustomerPayload
@@ -130,19 +170,8 @@ export const updateCustomer = async (
     return response.data?.data || response.data;
   } catch (error: any) {
     console.error('Error in updateCustomer, using dummy response:', error);
-    return {
-      id: customerId,
-      customerCode: 'C-10421',
-      fullName: customerPayload.fullName,
-      phoneNumber: customerPayload.phoneNumber,
-      email: customerPayload.email,
-      dateOfBirth: customerPayload.dateOfBirth,
-      status: 'Active',
-      ekycStatus: customerPayload.ekycStatus,
-      country: 'Saudi Arabia',
-      nidNumber: '111223344556',
-      address: customerPayload.address,
-    };
+    const fallbackCustomer = getCustomerFromDummy(customerId);
+    return { ...fallbackCustomer, ...customerPayload };
   }
 };
 

@@ -151,7 +151,7 @@ function StatCard({
             <Typography sx={{ color: '#6A7282', fontSize: 14, fontWeight: 400, lineHeight: '20px' }}>
               {title}
             </Typography>
-            <Typography sx={{ color: '#101828', fontSize: compact ? 38 : 40, lineHeight: 1, fontWeight: 600 }}>
+            <Typography sx={{ color: '#101828', fontSize: compact ? 30 : 30, lineHeight: 1, fontWeight: 600 }}>
               {total}
             </Typography>
           </Stack>
@@ -166,7 +166,7 @@ function StatCard({
                   <Typography sx={{ color: '#6A7282', fontSize: 12, fontWeight: 400, lineHeight: '16px' }}>
                     {leftLabel}
                   </Typography>
-                  <Typography sx={{ color: '#101828', fontSize: 28, lineHeight: '32px', fontWeight: 500 }}>
+                  <Typography sx={{ color: '#101828', fontSize: 18, lineHeight: '32px', fontWeight: 500 }}>
                     {leftValue}
                   </Typography>
                 </Stack>
@@ -177,7 +177,7 @@ function StatCard({
                   <Typography sx={{ color: '#6A7282', fontSize: 12, fontWeight: 400, lineHeight: '16px' }}>
                     {rightLabel}
                   </Typography>
-                  <Typography sx={{ color: '#101828', fontSize: 28, lineHeight: '32px', fontWeight: 500 }}>
+                  <Typography sx={{ color: '#101828', fontSize: 18, lineHeight: '32px', fontWeight: 500 }}>
                     {rightValue}
                   </Typography>
                 </Stack>
@@ -596,19 +596,27 @@ export default function OneView() {
         </Box>
       </Box>
 
-      <Grid container spacing={1.75}>
-        <Grid item xs={12} lg={7}>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          gap: '24px',
+        }}
+      >
+        <Box sx={{ width: { xs: '100%', lg: 'calc((100% - 24px) / 2)' } }}>
           <Card
             sx={{
               borderRadius: '14px',
               boxShadow: 'none',
               border: '1px solid #E8EEF5',
+              height: { lg: 515 },
             }}
           >
             <CardContent sx={{ p: 2.25 }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.75 }}>
                 <Stack>
-                  <Typography sx={{ color: '#101828', fontSize: 34, fontWeight: 700 }}>Customer Growth</Typography>
+                  <Typography sx={{ color: '#101828', fontSize: 18, fontWeight: 500 }}>Customer Growth</Typography>
                   <Typography sx={{ color: '#6A7282', fontSize: 14, fontWeight: 400 }}>
                     Customer acquisition and activity trends
                   </Typography>
@@ -641,20 +649,20 @@ export default function OneView() {
               />
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} lg={5}>
+        <Box sx={{ width: { xs: '100%', lg: 'calc((100% - 24px) / 2)' } }}>
           <Card
             sx={{
               borderRadius: '14px',
               boxShadow: 'none',
               border: '1px solid #E8EEF5',
-              height: 1,
+              height: { lg: 515 },
             }}
           >
             <CardContent sx={{ p: 2.25 }}>
               <Stack sx={{ mb: 2 }}>
-                <Typography sx={{ color: '#101828', fontSize: 28, fontWeight: 500 }}>Recent Activity</Typography>
+                <Typography sx={{ color: '#101828', fontSize: 18, fontWeight: 500 }}>Recent Activity</Typography>
                 <Typography sx={{ color: '#6A7282', fontSize: 14, fontWeight: 400 }}>
                   Latest transactions
                 </Typography>
@@ -717,8 +725,8 @@ export default function OneView() {
               </Stack>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Stack>
   );
 }

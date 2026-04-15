@@ -29,8 +29,8 @@ declare module '@mui/material/styles' {
   }
 }
 
-export const primaryFont = 'Avenir LT Std, sans-serif';
-export const secondaryFont = 'Barlow, sans-serif';
+export const primaryFont = 'Roboto, sans-serif';
+export const secondaryFont = 'Roboto, sans-serif';
 
 // ----------------------------------------------------------------------
 

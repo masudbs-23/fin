@@ -266,7 +266,7 @@ export function RHFHierarchicalSelect({
                 key={option.id}
                 value={option.id}
                 sx={{
-                  fontFamily: 'monospace',
+                  fontFamily: 'inherit',
                   fontSize: '0.875rem',
                   py: 0.75,
                   px: 1.5,

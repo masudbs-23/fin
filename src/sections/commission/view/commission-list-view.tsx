@@ -127,14 +127,14 @@ export default function CommissionListView() {
   return (
     <>
       <Stack spacing={2.5}>
-        <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E', lineHeight: 1.2 }}>
+        <Typography sx={{ fontSize: 18, fontWeight: 500, color: '#191B1E', lineHeight: 1.2 }}>
           Commission
         </Typography>
 
         <Box sx={{ width: { xs: '100%', md: '1097px' }, height: '68px', overflowX: 'auto' }}>
           <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', height: '100%' }}>
             <Box sx={{ flex: 1 }}>
-              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>From Date</Typography>
+              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>From Date</Typography>
               <DatePicker
                 value={filters.fromDate ? dayjs(filters.fromDate) : null}
                 onChange={(date) =>
@@ -155,7 +155,7 @@ export default function CommissionListView() {
               />
             </Box>
             <Box sx={{ flex: 1 }}>
-              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>To Date</Typography>
+              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>To Date</Typography>
               <DatePicker
                 value={filters.toDate ? dayjs(filters.toDate) : null}
                 onChange={(date) =>
@@ -176,7 +176,7 @@ export default function CommissionListView() {
               />
             </Box>
             <Box sx={{ flex: 1 }}>
-              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Customer Mobile Number</Typography>
+              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>Customer Mobile Number</Typography>
               <TextField
                 fullWidth
                 size="small"
@@ -232,7 +232,7 @@ export default function CommissionListView() {
             bgcolor: '#FFFFFF',
           }}
         >
-          <Typography sx={{ fontSize: 16, fontWeight: 500, color: '#191B1E' }}>Commission List</Typography>
+          <Typography sx={{ fontSize: 16, fontWeight: 500, color: '#010002' }}>Commission List</Typography>
         </Box>
 
         <Box sx={{ overflowX: 'auto' }}>

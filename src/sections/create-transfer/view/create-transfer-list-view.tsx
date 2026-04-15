@@ -119,9 +119,9 @@ export default function CreateTransferListView() {
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, md: 2 }, pt: 0.5 }}>
+    <>
       <Stack spacing={2.5}>
-        <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#191B1E' }}>Create New Transfer</Typography>
+        <Typography sx={{ fontSize: 18, fontWeight: 500, color: '#191B1E' }}>Create New Transfer</Typography>
 
         <Grid container spacing={1} alignItems="end">
           <Grid item xs={12} md={3}>
@@ -201,7 +201,7 @@ export default function CreateTransferListView() {
             height: 16,
             display: 'flex',
             alignItems: 'center',
-            px: 0.75,
+    
             borderRadius: '10px',
             bgcolor: '#FFFFFF',
             mt: 1,
@@ -286,6 +286,6 @@ export default function CreateTransferListView() {
           </Table>
         </Box>
       </Stack>
-    </Container>
+    </>
   );
 }
