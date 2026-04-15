@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   Chip,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -65,7 +64,7 @@ export default function TransactionsListView() {
   }, [filters, transactionListResponse?.data?.list]);
 
   const inputSx = {
-    width: '288px',
+    width: { xs: '100%', sm: '200px', md: '288px', lg: '288px', xl: '288px' },
     '& .MuiOutlinedInput-root': {
       height: 40,
       borderRadius: '8px',
@@ -107,124 +106,128 @@ export default function TransactionsListView() {
           Transactions
         </Typography>
 
-        <Stack spacing={2.5}>
-          <Grid container spacing={2} alignItems="end">
-            <Grid item xs={12} md={3}>
-              <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Date</Typography>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="dd/mm/yyyy"
-                value={filters.date}
-                onChange={(event) => setFilters((prev) => ({ ...prev, date: event.target.value }))}
-                sx={inputSx}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Status</Typography>
-              <TextField
-                fullWidth
-                select
-                size="small"
-                value={filters.status}
-                onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}
-                SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
-                sx={inputSx}
-              >
-                {STATUS_OPTIONS.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Payout Type</Typography>
-              <TextField
-                fullWidth
-                select
-                size="small"
-                value={filters.payoutType}
-                onChange={(event) => setFilters((prev) => ({ ...prev, payoutType: event.target.value }))}
-                SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
-                sx={inputSx}
-              >
-                {PAYOUT_TYPES.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Stack direction="row" spacing={1}>
-                <IconButton
-                  sx={{
-                    width: 44,
-                    height: 40,
-                    borderRadius: '12px',
-                    bgcolor: '#03BC00',
-                    color: '#FFFFFF',
-                    '&:hover': { bgcolor: '#02A900' },
-                  }}
+        <Box sx={{ width: { xs: '100%', md: '1097px' }, height: '167px', overflowX: 'auto' }}>
+          <Stack spacing="20px" sx={{ height: '100%' }}>
+            {/* First Row: Date, Status, Payout Type, Search/Download */}
+            <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end' }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Date</Typography>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="dd/mm/yyyy"
+                  value={filters.date}
+                  onChange={(event) => setFilters((prev) => ({ ...prev, date: event.target.value }))}
+                  sx={inputSx}
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Status</Typography>
+                <TextField
+                  fullWidth
+                  select
+                  size="small"
+                  value={filters.status}
+                  onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}
+                  SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+                  sx={inputSx}
                 >
-                  <SearchIcon fontSize="small" />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    width: 44,
-                    height: 40,
-                    borderRadius: '12px',
-                    bgcolor: '#03BC00',
-                    color: '#FFFFFF',
-                    '&:hover': { bgcolor: '#02A900' },
-                  }}
+                  {STATUS_OPTIONS.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Payout Type</Typography>
+                <TextField
+                  fullWidth
+                  select
+                  size="small"
+                  value={filters.payoutType}
+                  onChange={(event) => setFilters((prev) => ({ ...prev, payoutType: event.target.value }))}
+                  SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+                  sx={inputSx}
                 >
-                  <DownloadIcon fontSize="small" />
-                </IconButton>
-              </Stack>
-            </Grid>
-          </Grid>
+                  {PAYOUT_TYPES.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Stack direction="row" spacing={1} sx={{ justifyContent: { xs: 'flex-start', sm: 'flex-start' } }}>
+                  <IconButton
+                    sx={{
+                      width: { xs: 40, sm: 44 },
+                      height: { xs: 36, sm: 40 },
+                      borderRadius: '12px',
+                      bgcolor: '#03BC00',
+                      color: '#FFFFFF',
+                      '&:hover': { bgcolor: '#02A900' },
+                    }}
+                  >
+                    <SearchIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      width: { xs: 40, sm: 44 },
+                      height: { xs: 36, sm: 40 },
+                      borderRadius: '12px',
+                      bgcolor: '#03BC00',
+                      color: '#FFFFFF',
+                      '&:hover': { bgcolor: '#02A900' },
+                    }}
+                  >
+                    <DownloadIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+              </Box>
+            </Box>
 
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
-              <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>
-                Customer Mobile Number
-              </Typography>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Enter mobile number"
-                value={filters.customerMobileNumber}
-                onChange={(event) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    customerMobileNumber: event.target.value,
-                  }))
-                }
-                sx={inputSx}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>
-                Recipient Mobile Number
-              </Typography>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Enter NID number"
-                value={filters.recipientMobileNumber}
-                onChange={(event) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    recipientMobileNumber: event.target.value,
-                  }))
-                }
-                sx={inputSx}
-              />
-            </Grid>
-          </Grid>
-        </Stack>
+            {/* Second Row: Customer Mobile Number, Recipient Mobile Number */}
+            <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', justifyContent: 'flex-start' }}>
+              <Box sx={{ width: '288px' }}>
+                <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>
+                  Customer Mobile Number
+                </Typography>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="Enter mobile number"
+                  value={filters.customerMobileNumber}
+                  onChange={(event) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      customerMobileNumber: event.target.value,
+                    }))
+                  }
+                  sx={inputSx}
+                />
+              </Box>
+              <Box sx={{ width: '288px' }}>
+                <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>
+                  Recipient Mobile Number
+                </Typography>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="Enter NID number"
+                  value={filters.recipientMobileNumber}
+                  onChange={(event) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      recipientMobileNumber: event.target.value,
+                    }))
+                  }
+                  sx={inputSx}
+                />
+              </Box>
+            </Box>
+          </Stack>
+        </Box>
 
         <Box
           sx={{
@@ -240,18 +243,18 @@ export default function TransactionsListView() {
         </Box>
 
         <Box sx={{ overflowX: 'auto' }}>
-          <Table sx={{ minWidth: 1120 }}>
+          <Table sx={{ minWidth: { xs: 700, sm: 900, md: 1120, lg: 1120, xl: 1120 } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: '#F9FAFB' }}>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Transaction ID</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Date & Time</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Customer Mobile</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Recipient Mobile</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Amount</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Exchange Rate</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Payout Method</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Status</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Action</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Transaction ID</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Date & Time</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Customer Mobile</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Recipient Mobile</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Amount</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Exchange Rate</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Payout Method</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Status</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 11, sm: 12, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -269,15 +272,22 @@ export default function TransactionsListView() {
                       },
                     }}
                   >
-                    <TableCell sx={{ color: '#00311E !important', fontWeight: 600, fontSize: '12.48px !important' }}>
+                    <TableCell
+                      sx={{
+                        color: '#00311E !important',
+                        fontWeight: 600,
+                        fontSize: { xs: '10px', sm: '11px', md: '12.48px' },
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {row.transactionId}
                     </TableCell>
-                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400 }}>{row.dateTime}</TableCell>
-                    <TableCell sx={{ color: '#010002 !important', fontSize: '13.6px ', fontWeight: 400 }}>{row.customerMobile}</TableCell>
-                    <TableCell sx={{ color: '#010002 !important', fontSize: '13.6px ', fontWeight: 400 }}>{row.recipientMobile}</TableCell>
-                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400   }}>{row.amount}</TableCell>
-                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400 }}>{row.exchangeRate}</TableCell>
-                    <TableCell sx={{ color: '#374151', fontSize: '13.6px ', fontWeight: 400 }}>{row.payoutMethod}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: { xs: 10, sm: 11, md: 13.6 }, fontWeight: 400, whiteSpace: 'nowrap' }}>{row.dateTime}</TableCell>
+                    <TableCell sx={{ color: '#010002 !important', fontSize: { xs: 10, sm: 11, md: 13.6 }, fontWeight: 400, whiteSpace: 'nowrap' }}>{row.customerMobile}</TableCell>
+                    <TableCell sx={{ color: '#010002 !important', fontSize: { xs: 10, sm: 11, md: 13.6 }, fontWeight: 400, whiteSpace: 'nowrap' }}>{row.recipientMobile}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: { xs: 10, sm: 11, md: 13.6 }, fontWeight: 400, whiteSpace: 'nowrap' }}>{row.amount}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: { xs: 10, sm: 11, md: 13.6 }, fontWeight: 400, whiteSpace: 'nowrap' }}>{row.exchangeRate}</TableCell>
+                    <TableCell sx={{ color: '#374151', fontSize: { xs: 10, sm: 11, md: 13.6 }, fontWeight: 400, whiteSpace: 'nowrap' }}>{row.payoutMethod}</TableCell>
                     <TableCell>
                       <Chip
                         label={row.status}
@@ -298,12 +308,13 @@ export default function TransactionsListView() {
                           setIsDialogOpen(true);
                         }}
                         sx={{
-                          height: 34,
-                          px: 1.6,
+                          height: { xs: 28, sm: 32, md: 34 },
+                          px: { xs: 1, sm: 1.3, md: 1.6 },
                           bgcolor: '#9BE6A8',
                           color: '#14532D',
                           borderRadius: '10px',
                           fontWeight: 500,
+                          fontSize: { xs: 11, sm: 12, md: 14 },
                           textTransform: 'none',
                           '&:hover': { bgcolor: '#8AD596' },
                         }}

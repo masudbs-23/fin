@@ -2,7 +2,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import DownloadIcon from '@mui/icons-material/Download';
 import {
   Box,
-  Container,
   Grid,
   IconButton,
   Stack,
@@ -85,7 +84,7 @@ export default function CommissionListView() {
   const { data: commissionListResponse } = useGetCommissionList(filters);
 
   const inputSx = {
-    width: '288px',
+    width: { xs: '100%', sm: '200px', md: '288px', lg: '288px', xl: '288px' },
     '& .MuiOutlinedInput-root': {
       height: 40,
       borderRadius: '8px',
@@ -131,74 +130,76 @@ export default function CommissionListView() {
           Commission
         </Typography>
 
-        <Grid container spacing={2} alignItems="end">
-          <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>From Date</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="dd/mm/yyyy"
-              value={filters.fromDate}
-              onChange={(event) => setFilters((prev) => ({ ...prev, fromDate: event.target.value }))}
-              sx={inputSx}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>To Date</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="dd/mm/yyyy"
-              value={filters.toDate}
-              onChange={(event) => setFilters((prev) => ({ ...prev, toDate: event.target.value }))}
-              sx={inputSx}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Typography sx={{ mb: 0.75, fontSize: 16, color: '#667085' }}>Customer Mobile Number</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Enter mobile number"
-              value={filters.customerMobileNumber}
-              onChange={(event) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  customerMobileNumber: event.target.value,
-                }))
-              }
-              sx={inputSx}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Stack direction="row" spacing={1}>
-              <IconButton
-                sx={{
-                  width: 44,
-                  height: 40,
-                  borderRadius: '12px',
-                  bgcolor: '#03BC00',
-                  color: '#FFFFFF',
-                  '&:hover': { bgcolor: '#02A900' },
-                }}
-              >
-                <SearchIcon />
-              </IconButton>
-              <IconButton
-                sx={{
-                  width: 44,
-                  height: 40,
-                  borderRadius: '12px',
-                  bgcolor: '#03BC00',
-                  color: '#FFFFFF',
-                  '&:hover': { bgcolor: '#02A900' },
-                }}
-              >
-                <DownloadIcon />
-              </IconButton>
-            </Stack>
-          </Grid>
-        </Grid>
+        <Box sx={{ width: { xs: '100%', md: '1097px' }, height: '68px', overflowX: 'auto' }}>
+          <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', height: '100%' }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>From Date</Typography>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="dd/mm/yyyy"
+                value={filters.fromDate}
+                onChange={(event) => setFilters((prev) => ({ ...prev, fromDate: event.target.value }))}
+                sx={inputSx}
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>To Date</Typography>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="dd/mm/yyyy"
+                value={filters.toDate}
+                onChange={(event) => setFilters((prev) => ({ ...prev, toDate: event.target.value }))}
+                sx={inputSx}
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Customer Mobile Number</Typography>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Enter mobile number"
+                value={filters.customerMobileNumber}
+                onChange={(event) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    customerMobileNumber: event.target.value,
+                  }))
+                }
+                sx={inputSx}
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Stack direction="row" spacing={1} sx={{ justifyContent: { xs: 'flex-start', sm: 'flex-start' } }}>
+                <IconButton
+                  sx={{
+                    width: { xs: 40, sm: 44 },
+                    height: { xs: 36, sm: 40 },
+                    borderRadius: '12px',
+                    bgcolor: '#03BC00',
+                    color: '#FFFFFF',
+                    '&:hover': { bgcolor: '#02A900' },
+                  }}
+                >
+                  <SearchIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  sx={{
+                    width: { xs: 40, sm: 44 },
+                    height: { xs: 36, sm: 40 },
+                    borderRadius: '12px',
+                    bgcolor: '#03BC00',
+                    color: '#FFFFFF',
+                    '&:hover': { bgcolor: '#02A900' },
+                  }}
+                >
+                  <DownloadIcon fontSize="small" />
+                </IconButton>
+              </Stack>
+            </Box>
+          </Box>
+        </Box>
 
         <Box
           sx={{
@@ -214,15 +215,15 @@ export default function CommissionListView() {
         </Box>
 
         <Box sx={{ overflowX: 'auto' }}>
-          <Table sx={{ minWidth: 980 }}>
+          <Table sx={{ minWidth: { xs: 600, sm: 800, md: 980, lg: 980, xl: 980 } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: '#F9FAFB' }}>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Transaction ID</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Date & Time</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Amount</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Customer Name</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Customer Mobile</TableCell>
-                <TableCell sx={{ color: '#191B1E', fontSize: 14, fontWeight: 400 }}>Total Commission</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 12, sm: 13, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Transaction ID</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 12, sm: 13, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Date & Time</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 12, sm: 13, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Amount</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 12, sm: 13, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Customer Name</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 12, sm: 13, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Customer Mobile</TableCell>
+                <TableCell sx={{ color: '#191B1E', fontSize: { xs: 12, sm: 13, md: 14 }, fontWeight: 400, whiteSpace: 'nowrap' }}>Total Commission</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -238,12 +239,21 @@ export default function CommissionListView() {
                     },
                   }}
                 >
-                  <TableCell sx={{ color: '#14532D !important', fontWeight: 600 }}>{row.transactionId}</TableCell>
-                  <TableCell>{row.dateTime}</TableCell>
-                  <TableCell>{row.amount}</TableCell>
-                  <TableCell sx={{ color: '#101828 !important', fontWeight: 500 }}>{row.customerName}</TableCell>
-                  <TableCell sx={{ color: '#101828 !important' }}>{row.customerMobile}</TableCell>
-                  <TableCell>{row.totalCommission}</TableCell>
+                  <TableCell
+                    sx={{
+                      color: '#00311E !important',
+                      fontWeight: 600,
+                      fontSize: { xs: '11px', sm: '11.5px', md: '12.48px' },
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                      {row.transactionId}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: { xs: 11, sm: 12, md: 13.6 }, whiteSpace: 'nowrap' }}>{row.dateTime}</TableCell>
+                    <TableCell sx={{ fontSize: { xs: 11, sm: 12, md: 13.6 }, whiteSpace: 'nowrap' }}>{row.amount}</TableCell>
+                    <TableCell sx={{ color: '#101828 !important', fontWeight: 500, fontSize: { xs: 11, sm: 12, md: 13.6 }, whiteSpace: 'nowrap' }}>{row.customerName}</TableCell>
+                    <TableCell sx={{ color: '#101828 !important', fontSize: { xs: 11, sm: 12, md: 13.6 }, whiteSpace: 'nowrap' }}>{row.customerMobile}</TableCell>
+                    <TableCell sx={{ fontSize: { xs: 11, sm: 12, md: 13.6 }, whiteSpace: 'nowrap' }}>{row.totalCommission}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
