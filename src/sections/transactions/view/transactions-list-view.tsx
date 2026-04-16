@@ -91,18 +91,9 @@ export default function TransactionsListView() {
       height: 40,
       borderRadius: '8px',
       bgcolor: '#FFFFFF',
-      '& fieldset': { 
-        borderColor: '#D5D7DA',
-        borderWidth: '1px'
-      },
-      '&:hover fieldset': { 
-        borderColor: '#D5D7DA',
-        borderWidth: '1px'
-      },
-      '&.Mui-focused fieldset': { 
-        borderColor: '#03BC00',
-        borderWidth: '1px'
-      },
+      '& fieldset': { borderColor: '#D0D5DD' },
+      '&:hover fieldset': { borderColor: '#D0D5DD' },
+      '&.Mui-focused fieldset': { borderColor: '#03BC00' },
     },
     '& .MuiInputBase-input': {
       fontSize: 14,
@@ -112,6 +103,30 @@ export default function TransactionsListView() {
       paddingLeft: '14px',
       boxSizing: 'border-box',
       textAlign: 'left',
+      '&:-webkit-autofill': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:hover': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:focus': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:active': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
     },
     '& .MuiSelect-select': {
       textAlign: 'left',

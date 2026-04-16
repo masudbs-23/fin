@@ -1,9 +1,9 @@
 import SearchIcon from 'src/assets/table/Search.svg';
 import ArrowIcon from 'src/assets/table/Arrow.svg';
+import UploadIcon from 'src/assets/svg/Upload.svg';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {
   Box,
   Button,
@@ -24,6 +24,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import * as yup from 'yup';
 import { useCreateCustomer, useGetCustomerDetails, useGetCustomerList, useUpdateCustomer } from 'src/query/hooks/customer';
@@ -257,14 +259,39 @@ export default function CustomersListView() {
     },
     '& .MuiInputBase-input': {
       fontSize: 14,
-      color: '#667085',
+      color: '#010002',
+      '&:-webkit-autofill': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:hover': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:focus': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:active': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
     },
   };
 
   const createDialogInputSx = {
+    width: '320px',
     '& .MuiOutlinedInput-root': {
       height: 40,
-      borderRadius: '10px',
+      borderRadius: '8px',
       bgcolor: '#FFFFFF',
       '& fieldset': { borderColor: '#D0D5DD' },
       '&:hover fieldset': { borderColor: '#D0D5DD' },
@@ -272,9 +299,33 @@ export default function CustomersListView() {
     },
     '& .MuiInputBase-input': {
       fontSize: 14,
-      color: '#98A2B3',
+      color: '#010002',
       px: 1.5,
       py: 1.2,
+      '&:-webkit-autofill': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:hover': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:focus': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:active': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
     },
   };
 
@@ -473,7 +524,12 @@ export default function CustomersListView() {
                     country: event.target.value,
                   }))
                 }
-                SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+                SelectProps={{
+                  IconComponent: KeyboardArrowDownRoundedIcon,
+                  displayEmpty: true,
+                  renderValue: (selected) =>
+                    typeof selected === 'string' && selected ? selected : 'Choose',
+                }}
                 sx={inputSx}
               >
                 <MenuItem value="">Choose</MenuItem>
@@ -646,8 +702,7 @@ export default function CustomersListView() {
         maxWidth={false}
         PaperProps={{
           sx: {
-            width: 711,
-            maxWidth: 'calc(100% - 24px)',
+            width: { md: '711px', xs: 'calc(100% - 24px)' },
             borderRadius: '12px',
             m: 1.5,
           },
@@ -656,19 +711,20 @@ export default function CustomersListView() {
         <DialogTitle sx={{ px: 3.25, pt: 3, pb: 1, fontSize: 18, lineHeight: 1.2, fontWeight: 500, color: '#191B1E' }}>
           Customer
         </DialogTitle>
-        <DialogContent sx={{ px: 3.25, py: 0 }}>
+        <DialogContent sx={{ px: 3.25, py: 0, overflow: 'visible' }}>
           <Typography sx={{ mb: 2.5, fontSize: 16, fontWeight: 400, color: '#344054', lineHeight: 1.2 }}>
             Edit Customer
           </Typography>
-          <Grid container spacing={2.25}>
+          <Box sx={{ width: '660px', mx: 'auto' }}>
+            <Grid container spacing={2.25}>
             <Grid item xs={12} md={6}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#98A2B3', lineHeight: 1.1 }}>Full Name</Typography>
               <TextField
-                fullWidth
                 value={editForm.fullName}
                 onChange={(event) => setEditForm((prev) => ({ ...prev, fullName: event.target.value }))}
                 size="small"
                 sx={{
+                  width: '320px',
                   '& .MuiOutlinedInput-root': {
                     height: 40,
                     borderRadius: '10px',
@@ -727,11 +783,11 @@ export default function CustomersListView() {
                   <Typography sx={{ fontSize: 14, color: '#191B1E', lineHeight: 1 }}>+88</Typography>
                 </Box>
                 <TextField
-                  fullWidth
                   value={editForm.phoneNumber}
                   onChange={(event) => setEditForm((prev) => ({ ...prev, phoneNumber: event.target.value }))}
                   size="small"
                   sx={{
+                    width: '236px',
                     '& .MuiOutlinedInput-root': {
                       height: 40,
                       borderRadius: 0,
@@ -745,11 +801,11 @@ export default function CustomersListView() {
             <Grid item xs={12} md={6}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#98A2B3', lineHeight: 1.1 }}>Email Address</Typography>
               <TextField
-                fullWidth
                 value={editForm.email}
                 onChange={(event) => setEditForm((prev) => ({ ...prev, email: event.target.value }))}
                 size="small"
                 sx={{
+                  width: '320px',
                   '& .MuiOutlinedInput-root': {
                     height: 40,
                     borderRadius: '10px',
@@ -763,31 +819,41 @@ export default function CustomersListView() {
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#98A2B3', lineHeight: 1.1 }}>Date of Birth</Typography>
-              <TextField
-                fullWidth
-                value={editForm.dateOfBirth}
-                onChange={(event) => setEditForm((prev) => ({ ...prev, dateOfBirth: event.target.value }))}
-                size="small"
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    height: 40,
-                    borderRadius: '10px',
-                    '& fieldset': { borderColor: '#D0D5DD' },
-                    '&:hover fieldset': { borderColor: '#D0D5DD' },
-                    '&.Mui-focused fieldset': { borderColor: '#03BC00' },
+              <DatePicker
+                value={editForm.dateOfBirth ? dayjs(editForm.dateOfBirth) : null}
+                onChange={(date) =>
+                  setEditForm((prev) => ({
+                    ...prev,
+                    dateOfBirth: date && dayjs(date).isValid() ? dayjs(date).format('YYYY-MM-DD') : '',
+                  }))
+                }
+                format="DD/MM/YYYY"
+                slotProps={{
+                  textField: {
+                    size: 'small',
+                    sx: {
+                      width: '320px',
+                      '& .MuiOutlinedInput-root': {
+                        height: 40,
+                        borderRadius: '10px',
+                        '& fieldset': { borderColor: '#D0D5DD' },
+                        '&:hover fieldset': { borderColor: '#D0D5DD' },
+                        '&.Mui-focused fieldset': { borderColor: '#03BC00' },
+                      },
+                      '& .MuiInputBase-input': { fontSize: 14, color: '#191B1E', px: 1.5 },
+                    },
                   },
-                  '& .MuiInputBase-input': { fontSize: 14, color: '#191B1E', px: 1.5 },
                 }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#98A2B3', lineHeight: 1.1 }}>eKYC Status</Typography>
               <TextField
-                fullWidth
                 value={editForm.ekycStatus}
                 size="small"
                 InputProps={{ readOnly: true }}
                 sx={{
+                  width: '320px',
                   '& .MuiOutlinedInput-root': {
                     height: 40,
                     borderRadius: '10px',
@@ -803,11 +869,11 @@ export default function CustomersListView() {
             <Grid item xs={12} md={6}>
               <Typography sx={{ mb: 0.75, fontSize: 16, color: '#98A2B3', lineHeight: 1.1 }}>Address</Typography>
               <TextField
-                fullWidth
                 value={editForm.address}
                 onChange={(event) => setEditForm((prev) => ({ ...prev, address: event.target.value }))}
                 size="small"
                 sx={{
+                  width: '320px',
                   '& .MuiOutlinedInput-root': {
                     height: 40,
                     borderRadius: '10px',
@@ -820,8 +886,9 @@ export default function CustomersListView() {
               />
             </Grid>
           </Grid>
+          </Box>
         </DialogContent>
-        <DialogActions sx={{ px: 3.25, pt: 2.5, pb: 3, gap: 2 }}>
+        <DialogActions sx={{ px: 3.25, pt: 2.5, pb: 3, gap: 1 }}>
           <Button
             onClick={handleEditCancel}
             sx={{
@@ -865,8 +932,7 @@ export default function CustomersListView() {
         maxWidth={false}
         PaperProps={{
           sx: {
-            width: 711,
-            maxWidth: 'calc(100% - 24px)',
+            width: { md: '711px', xs: 'calc(100% - 24px)' },
             borderRadius: '12px',
             m: 1.5,
           },
@@ -875,8 +941,10 @@ export default function CustomersListView() {
         <DialogTitle sx={{ px: 3.25, pt: 3, pb: 1.5, fontSize: 18, fontWeight: 500, color: '#191B1E' }}>
           New Customer Registration
         </DialogTitle>
-        <DialogContent sx={{ px: 3.25, py: 0 }}>
-          <Stack direction="row" alignItems="flex-start" justifyContent="center" sx={{ mb: 3.5 }}>
+        <DialogContent sx={{ py: 0 }}>
+          <Box sx={{ width: '660px', mx: 'auto' }}>
+            <Box sx={{ width: '568px', mx: 'auto', mb: 3.5 }}>
+            <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
             {[1, 2, 3, 4].map((step, index) => {
               const isDocumentStep = step === 4;
               const isActiveStep = createStep >= step && !isDocumentStep;
@@ -884,20 +952,27 @@ export default function CustomersListView() {
 
               return (
                 <Box key={step} sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Stack alignItems="center" spacing={0.5} sx={{ minWidth: 80 }}>
+                  <Stack alignItems="center" spacing={0.5}>
                     <Box
                       sx={{
                         width: 40,
                         height: 40,
                         borderRadius: '50%',
-                        bgcolor: circleColor,
+                        bgcolor: isActiveStep ? '#03BC00' : '#00311E',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
                     >
                       {isDocumentStep ? (
-                        <CloudUploadIcon sx={{ fontSize: 20, color: '#FFFFFF' }} />
+                        <Box
+                          component="img"
+                          src={UploadIcon}
+                          sx={{
+                            width: 20,
+                            height: 20,
+                          }}
+                        />
                       ) : (
                         <CheckCircleIcon sx={{ fontSize: 20, color: '#FFFFFF' }} />
                       )}
@@ -918,6 +993,7 @@ export default function CustomersListView() {
               );
             })}
           </Stack>
+          </Box>
 
           {createStep === 1 && (
             <Grid container spacing={2} sx={{ minHeight: 150 }}>
@@ -955,7 +1031,12 @@ export default function CustomersListView() {
                   size="small"
                   value={createForm.gender}
                   onChange={(event) => handleCreateFieldChange('gender', event.target.value)}
-                  SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+                  SelectProps={{
+                    IconComponent: KeyboardArrowDownRoundedIcon,
+                    displayEmpty: true,
+                    renderValue: (selected) =>
+                      typeof selected === 'string' && selected ? selected : 'Choose',
+                  }}
                   error={Boolean(createFormErrors.gender)}
                   helperText={createFormErrors.gender}
                   sx={createDialogInputSx}
@@ -970,15 +1051,24 @@ export default function CustomersListView() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography sx={{ mb: 0.75, fontSize: 16, color: '#98A2B3' }}>Date of Birth</Typography>
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="dd/mm/yyyy"
-                  value={createForm.dateOfBirth}
-                  onChange={(event) => handleCreateFieldChange('dateOfBirth', event.target.value)}
-                  error={Boolean(createFormErrors.dateOfBirth)}
-                  helperText={createFormErrors.dateOfBirth}
-                  sx={createDialogInputSx}
+              <DatePicker
+                value={createForm.dateOfBirth ? dayjs(createForm.dateOfBirth) : null}
+                onChange={(date) =>
+                  handleCreateFieldChange(
+                    'dateOfBirth',
+                    date && dayjs(date).isValid() ? dayjs(date).format('YYYY-MM-DD') : ''
+                  )
+                }
+                format="DD/MM/YYYY"
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    size: 'small',
+                    error: Boolean(createFormErrors.dateOfBirth),
+                    helperText: createFormErrors.dateOfBirth,
+                    sx: createDialogInputSx,
+                  },
+                }}
                 />
               </Grid>
             </Grid>
@@ -1046,7 +1136,12 @@ export default function CustomersListView() {
                   size="small"
                   value={createForm.country}
                   onChange={(event) => handleCreateFieldChange('country', event.target.value)}
-                  SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+                  SelectProps={{
+                    IconComponent: KeyboardArrowDownRoundedIcon,
+                    displayEmpty: true,
+                    renderValue: (selected) =>
+                      typeof selected === 'string' && selected ? selected : 'Choose',
+                  }}
                   error={Boolean(createFormErrors.country)}
                   helperText={createFormErrors.country}
                   sx={createDialogInputSx}
@@ -1094,111 +1189,107 @@ export default function CustomersListView() {
           )}
 
           {createStep === 4 && (
-            <Grid container spacing={2} sx={{ minHeight: 164, position: 'relative' }}>
-              <Grid item xs={12} md={6}>
-                <Button
-                  component="label"
-                  sx={{
-                    width: '100%',
-                    height: 132,
-                    borderRadius: '14px',
-                    border: '1.5px dashed #59D568',
-                    bgcolor: '#F2FAF4',
-                    textTransform: 'none',
-                    color: '#1F2937',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1.2,
-                  }}
-                >
-                  <Typography sx={{ fontSize: 16, fontWeight: 500 }}>Upload NID Documents</Typography>
-                  <CloudUploadIcon sx={{ color: '#03BC00', fontSize: 28 }} />
-                  <input
-                    hidden
-                    type="file"
-                    onChange={(event) =>
-                      handleCreateFieldChange('nidDocumentName', event.target.files?.[0]?.name || '')
-                    }
+            <Box sx={{ width: '444px', height: '173px', mx: 'auto', position: 'relative' }}>
+              <Box sx={{ display: 'flex', gap: '16px', height: '100%' }}>
+                <Box sx={{ width: '222px' }}>
+                  <Button
+                    component="label"
+                    sx={{
+                      width: '222px',
+                      height: '137px',
+                      borderRadius: '12px',
+                      border: '1px dashed #59D568',
+                      borderStyle: 'dashed',
+                      borderWidth: 1,
+                      bgcolor: '#F2FAF4',
+                      textTransform: 'none',
+                      color: '#1F2937',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1.2,
+                    }}
+                  >
+                    <Typography sx={{ fontSize: 16, fontWeight: 500 }}>Upload NID Documents</Typography>
+                    <Box
+                    component="img"
+                    src={UploadIcon}
+                    sx={{
+                      width: 25,
+                      height: 25,
+                    }}
                   />
-                </Button>
-                {createForm.nidDocumentName && (
-                  <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#027A48' }}>{createForm.nidDocumentName}</Typography>
-                )}
-                {!createForm.nidDocumentName && createFormErrors.nidDocumentName && (
-                  <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#D92D20' }}>{createFormErrors.nidDocumentName}</Typography>
-                )}
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Button
-                  component="label"
-                  sx={{
-                    width: '100%',
-                    height: 132,
-                    borderRadius: '14px',
-                    border: '1.5px dashed #59D568',
-                    bgcolor: '#F2FAF4',
-                    textTransform: 'none',
-                    color: '#1F2937',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1.2,
-                  }}
-                >
-                  <Typography sx={{ fontSize: 16, fontWeight: 500 }}>Upload Your Photo</Typography>
-                  <CloudUploadIcon sx={{ color: '#03BC00', fontSize: 28 }} />
-                  <input
-                    hidden
-                    type="file"
-                    onChange={(event) =>
-                      handleCreateFieldChange('photoDocumentName', event.target.files?.[0]?.name || '')
-                    }
-                  />
-                </Button>
-                {createForm.photoDocumentName && (
-                  <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#027A48' }}>{createForm.photoDocumentName}</Typography>
-                )}
-                {!createForm.photoDocumentName && createFormErrors.photoDocumentName && (
-                  <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#D92D20' }}>{createFormErrors.photoDocumentName}</Typography>
-                )}
-              </Grid>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 6,
-                  right: 56,
-                  width: 56,
-                  height: 34,
-                  borderRadius: '20px',
-                  bgcolor: '#FFFFFF',
-                  border: '1px solid #D0D5DD',
-                  display: { xs: 'none', md: 'flex' },
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  px: 0.4,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: '50%',
-                    bgcolor: '#12B76A',
-                    color: '#FFFFFF',
-                    fontSize: 19,
-                    fontWeight: 700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  F
+                    <input
+                      hidden
+                      type="file"
+                      onChange={(event) =>
+                        handleCreateFieldChange('nidDocumentName', event.target.files?.[0]?.name || '')
+                      }
+                    />
+                  </Button>
+                  {createForm.nidDocumentName && (
+                    <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#027A48' }}>
+                      {createForm.nidDocumentName}
+                    </Typography>
+                  )}
+                  {!createForm.nidDocumentName && createFormErrors.nidDocumentName && (
+                    <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#D92D20' }}>
+                      {createFormErrors.nidDocumentName}
+                    </Typography>
+                  )}
                 </Box>
-                <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: '#98A2B3' }} />
+
+                <Box sx={{ width: '222px' }}>
+                  <Button
+                    component="label"
+                    sx={{
+                      width: '222px',
+                      height: '137px',
+                      borderRadius: '12px',
+                      border: '1px dashed #59D568',
+                      borderStyle: 'dashed',
+                      borderWidth: 1,
+                      bgcolor: '#F2FAF4',
+                      textTransform: 'none',
+                      color: '#1F2937',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1.2,
+                    }}
+                  >
+                    <Typography sx={{ fontSize: 16, fontWeight: 500 }}>Upload Your Photo</Typography>
+                    <Box
+                    component="img"
+                    src={UploadIcon}
+                    sx={{
+                      width: 25,
+                      height: 25,
+                    }}
+                  />
+                    <input
+                      hidden
+                      type="file"
+                      onChange={(event) =>
+                        handleCreateFieldChange('photoDocumentName', event.target.files?.[0]?.name || '')
+                      }
+                    />
+                  </Button>
+                  {createForm.photoDocumentName && (
+                    <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#027A48' }}>
+                      {createForm.photoDocumentName}
+                    </Typography>
+                  )}
+                  {!createForm.photoDocumentName && createFormErrors.photoDocumentName && (
+                    <Typography sx={{ mt: 0.75, fontSize: 11.5, color: '#D92D20' }}>
+                      {createFormErrors.photoDocumentName}
+                    </Typography>
+                  )}
+                </Box>
               </Box>
-            </Grid>
+            </Box>
           )}
+          </Box>
         </DialogContent>
-        <DialogActions sx={{ px: 3.25, pt: 2.5, pb: 3, gap: 2 }}>
+        <DialogActions sx={{ px: 3.25, pt: 2.5, pb: 3, gap: 1 }}>
           <Button
             onClick={handleCreateCancel}
             sx={{

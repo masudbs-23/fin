@@ -111,6 +111,30 @@ export default function CommissionListView() {
       paddingLeft: '14px',
       boxSizing: 'border-box',
       textAlign: 'left',
+      '&:-webkit-autofill': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:hover': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:focus': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:active': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
     },
   };
 

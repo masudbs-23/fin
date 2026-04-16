@@ -114,7 +114,31 @@ export default function CreateTransferListView() {
     },
     '& .MuiInputBase-input': {
       fontSize: 14,
-      color: '#667085',
+      color: '#010002',
+      '&:-webkit-autofill': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:hover': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:focus': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
+      '&:-webkit-autofill:active': {
+        WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+        WebkitTextFillColor: '#010002',
+        backgroundColor: '#FFFFFF !important',
+        color: '#010002 !important',
+      },
     },
   };
 
@@ -169,7 +193,12 @@ export default function CreateTransferListView() {
                   payoutType: event.target.value,
                 }))
               }
-              SelectProps={{ IconComponent: KeyboardArrowDownRoundedIcon }}
+              SelectProps={{
+                IconComponent: KeyboardArrowDownRoundedIcon,
+                displayEmpty: true,
+                renderValue: (selected) =>
+                  typeof selected === 'string' && selected ? selected : 'Choose',
+              }}
               sx={inputSx}
             >
               <MenuItem value="">Choose</MenuItem>
