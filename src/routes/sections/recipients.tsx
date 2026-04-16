@@ -5,10 +5,7 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
-const RecipientsListPage = lazy(() => import('src/pages/catalog/manufacturers/manufacturers-list-page'));
-const RecipientCreatePage = lazy(() => import('src/pages/catalog/manufacturers/manufacturer-create-page'));
-const RecipientViewPage = lazy(() => import('src/pages/catalog/manufacturers/manufacturer-view-page'));
-const RecipientEditPage = lazy(() => import('src/pages/catalog/manufacturers/manufacturer-edit-page'));
+const RecipientsListPage = lazy(() => import('src/pages/recipient/recipient-list-page'));
 
 export const recipientsRoutes = [
   {
@@ -24,9 +21,6 @@ export const recipientsRoutes = [
     ),
     children: [
       { element: <RecipientsListPage />, index: true },
-      { element: <RecipientCreatePage />, path: 'create' },
-      { element: <RecipientViewPage />, path: ':recipientId/view' },
-      { element: <RecipientEditPage />, path: ':recipientId/edit' },
     ],
   },
 ];

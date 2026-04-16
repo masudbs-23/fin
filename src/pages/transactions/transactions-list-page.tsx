@@ -3,7 +3,7 @@ import TransactionsListView from 'src/sections/transactions/view/transactions-li
 
 // ----------------------------------------------------------------------
 
-export default function CategoriesListPage() {
+export default function TransactionsListPage() {
   return (
     <>
       <Helmet>

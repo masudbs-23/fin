@@ -3,7 +3,7 @@ import CommissionListView from 'src/sections/commission/view/commission-list-vie
 
 // ----------------------------------------------------------------------
 
-export default function TagsListPage() {
+export default function CommissionListPage() {
   return (
     <>
       <Helmet>

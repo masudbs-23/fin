@@ -3,7 +3,7 @@ import CreateTransferListView from 'src/sections/create-transfer/view/create-tra
 
 // ----------------------------------------------------------------------
 
-export default function OrdersListPage() {
+export default function CreateTransferListPage() {
   return (
     <>
       <Helmet>

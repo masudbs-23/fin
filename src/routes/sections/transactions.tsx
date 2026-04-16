@@ -5,10 +5,7 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
-const TransactionsListPage = lazy(() => import('src/pages/catalog/categories/categories-list-page'));
-const TransactionCreatePage = lazy(() => import('src/pages/catalog/categories/category-create-page'));
-const TransactionViewPage = lazy(() => import('src/pages/catalog/categories/category-view-page'));
-const TransactionEditPage = lazy(() => import('src/pages/catalog/categories/category-edit-page'));
+const TransactionsListPage = lazy(() => import('src/pages/transactions/transactions-list-page'));
 
 export const transactionsRoutes = [
   {
@@ -24,9 +21,6 @@ export const transactionsRoutes = [
     ),
     children: [
       { element: <TransactionsListPage />, index: true },
-      { element: <TransactionCreatePage />, path: 'create' },
-      { element: <TransactionViewPage />, path: ':transactionId/view' },
-      { element: <TransactionEditPage />, path: ':transactionId/edit' },
     ],
   },
 ];
