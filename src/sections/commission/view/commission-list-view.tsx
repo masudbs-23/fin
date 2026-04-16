@@ -171,7 +171,7 @@ export default function CommissionListView() {
 
         <Box sx={{ width: '100%', maxWidth: '100%' }}>
           <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', flexWrap: 'wrap' }}>
-            <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+            <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>From Date</Typography>
               <DatePicker
                 value={filters.fromDate ? dayjs(filters.fromDate) : null}
@@ -192,7 +192,7 @@ export default function CommissionListView() {
                 }}
               />
             </Box>
-            <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+            <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>To Date</Typography>
               <DatePicker
                 value={filters.toDate ? dayjs(filters.toDate) : null}
@@ -213,7 +213,7 @@ export default function CommissionListView() {
                 }}
               />
             </Box>
-            <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+            <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>Customer Mobile Number</Typography>
               <TextField
                 fullWidth

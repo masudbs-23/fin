@@ -167,6 +167,7 @@ export default function RecipientListView() {
   };
 
   const inputSx = {
+    width: { xs: '100%', sm: '288px' },
     '& .MuiOutlinedInput-root': {
       height: 40,
       borderRadius: '8px',

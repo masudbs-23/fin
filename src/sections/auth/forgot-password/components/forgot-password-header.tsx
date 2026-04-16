@@ -6,7 +6,7 @@ import AuthLogoSvg from 'src/assets/auth/Auth_Logo.svg';
 export default function ForgotPasswordHeader() {
   return (
     <>
-      <Box
+      {/* <Box
         component="img"
         alt="auth logo"
         src={AuthLogoSvg}
@@ -17,7 +17,7 @@ export default function ForgotPasswordHeader() {
           aspectRatio: '324 / 80',
           mb: 4,
         }}
-      />
+      /> */}
 
       <Stack spacing={1.5} sx={{ mb: 5, width: '100%', minWidth: 0 }}>
         <Typography 

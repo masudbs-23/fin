@@ -18,7 +18,7 @@ export default function VerifyOtpHeader({ mode = 'verify-otp', onLogoClick }: Pr
 
   return (
     <>
-      <Box
+      {/* <Box
         component="img"
         alt="auth logo"
         src={AuthLogoSvg}
@@ -31,7 +31,7 @@ export default function VerifyOtpHeader({ mode = 'verify-otp', onLogoClick }: Pr
           mb: 4,
           cursor: onLogoClick ? 'pointer' : 'default',
         }}
-      />
+      /> */}
 
       <Stack spacing={1.5} sx={{ mb: 5, width: '100%', minWidth: 0, alignItems: 'flex-start' }}>
         <Typography 

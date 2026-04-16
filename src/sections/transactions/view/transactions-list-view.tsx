@@ -164,7 +164,7 @@ export default function TransactionsListView() {
           <Stack spacing="20px">
             {/* First Row: Date, Status, Payout Type, Search/Download */}
             <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', flexWrap: 'wrap' }}>
-              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+              <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Date</Typography>
                 <DatePicker
                   value={filters.date ? dayjs(filters.date) : null}
@@ -185,7 +185,7 @@ export default function TransactionsListView() {
                   }}
                 />
               </Box>
-              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+              <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Status</Typography>
                 <TextField
                   fullWidth
@@ -203,7 +203,7 @@ export default function TransactionsListView() {
                   ))}
                 </TextField>
               </Box>
-              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+              <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Payout Type</Typography>
                 <TextField
                   fullWidth
@@ -268,7 +268,7 @@ export default function TransactionsListView() {
 
             {/* Second Row: Customer Mobile Number, Recipient Mobile Number */}
             <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
-              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+              <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>
                   Customer Mobile Number
                 </Typography>
@@ -286,7 +286,7 @@ export default function TransactionsListView() {
                   sx={inputSx}
                 />
               </Box>
-              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+              <Box sx={{ width: { xs: '100%', sm: '288px' } }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>
                   Recipient Mobile Number
                 </Typography>
