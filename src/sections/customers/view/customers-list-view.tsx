@@ -1,7 +1,8 @@
 import SearchIcon from 'src/assets/table/Search.svg';
 import ArrowIcon from 'src/assets/table/Arrow.svg';
 import UploadIcon from 'src/assets/svg/Upload.svg';
-import EditIcon from '@mui/icons-material/Edit';
+import PencilIcon from 'src/assets/table/Pencil.svg';
+import EyeIcon from 'src/assets/table/Eye.svg';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {
@@ -671,7 +672,7 @@ export default function CustomersListView() {
                       <TableCell>
                         <Button
                           size="small"
-                          startIcon={<EditIcon fontSize="small" />}
+                          startIcon={<Box component="img" src={PencilIcon} sx={{ width: 14, height: 14 }} />}
                           onClick={() => handleEditClick(customer)}
                           sx={{
                             bgcolor: '#9BE6A8',
