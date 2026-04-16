@@ -178,21 +178,25 @@ const StyledNavItem = styled(ListItemButton, {
 
   const baseStyles = {
     item: {
+      width: '233px',
+      height: '44px',
       marginBottom: 4,
       borderRadius: 8,
       color: theme.palette.text.secondary,
-      padding: theme.spacing(0.5, 1, 0.5, 1.5),
+      padding: '10px 6px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
     },
     icon: {
-      width: 20,
-      height: 20,
+      width: 24,
+      height: 24,
       flexShrink: 0,
-      marginRight: theme.spacing(2),
     },
     label: {
       ...noWrapStyles,
       ...theme.typography.body2,
-      fontSize: '14px',
+      fontSize: '16px',
       textTransform: 'capitalize',
       fontWeight: theme.typography[active ? 'fontWeightSemiBold' : 'fontWeightMedium'],
     },
@@ -238,10 +242,22 @@ const StyledNavItem = styled(ListItemButton, {
         ...baseStyles.arrow,
       },
       ...(active && {
-        color: '#03BC00',
-        backgroundColor: alpha(theme.palette.primary.main, 0.3),
+        color: '#03BC00 !important',
+        gap: '4px',
         '&:hover': {
-          backgroundColor: alpha(theme.palette.primary.main, 0.4),
+          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+        },
+        '& .icon': {
+          '& img': {
+            filter: 'brightness(0) saturate(100%) invert(73%) sepia(99%) saturate(1288%) hue-rotate(87deg) brightness(93%) contrast(89%) !important',
+            opacity: 1,
+          },
+        },
+        '& .label': {
+          color: '#03BC00 !important',
+        },
+        '& .sub-icon': {
+          backgroundColor: '#03BC00 !important',
         },
       }),
     }),
@@ -298,10 +314,22 @@ const StyledNavItem = styled(ListItemButton, {
           ...baseStyles.arrow,
         },
         ...(active && {
-          color: '#03BC00',
-          // backgroundColor: alpha(theme.palette.primary.main, 0.3),
+          color: '#03BC00 !important',
+          gap: '4px',
           '&:hover': {
-            backgroundColor: alpha(theme.palette.primary.main, 0.4),
+            backgroundColor: alpha(theme.palette.primary.main, 0.1),
+          },
+          '& .icon': {
+            '& img': {
+              filter: 'brightness(0) saturate(100%) invert(73%) sepia(99%) saturate(1288%) hue-rotate(87deg) brightness(93%) contrast(89%) !important',
+              opacity: 1,
+            },
+          },
+          '& .label': {
+            color: '#03BC00 !important',
+          },
+          '& .sub-icon': {
+            backgroundColor: '#03BC00 !important',
           },
         }),
       }),

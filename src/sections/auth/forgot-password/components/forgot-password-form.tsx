@@ -19,6 +19,7 @@ import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import { OtpFlowContext, OTP_FLOW_CONTEXT_KEY } from 'src/types/auth-flow';
 import { formatErrorMessage } from 'src/utils/format-error-message';
+import EmailIcon from 'src/assets/auth/Email.svg';
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
@@ -86,7 +87,7 @@ export default function ForgotPasswordForm() {
         control={methods.control}
         label="Email Address"
         placeholder="Test@gmail.com"
-        icon="solar:letter-bold"
+        iconSvg={EmailIcon}
       />
 
       <LoadingButton

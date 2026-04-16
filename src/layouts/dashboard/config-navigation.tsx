@@ -1,20 +1,21 @@
 import { useMemo } from 'react';
 import { paths } from 'src/routes/paths';
+import Box from '@mui/material/Box';
 
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
-import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
-import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
+import DashboardIcon from 'src/assets/sidebar/Dashboard.svg';
+import CustomerIcon from 'src/assets/sidebar/Customer.svg';
+import CreateTransferIcon from 'src/assets/sidebar/Create_Transfer.svg';
+import TransactionsIcon from 'src/assets/sidebar/Transactions.svg';
+import CommissionIcon from 'src/assets/sidebar/Commissions.svg';
+import RecipientIcon from 'src/assets/sidebar/Recipient.svg';
 
 const ICONS = {
-  dashboard: <DashboardIcon />,
-  customer: <GroupOutlinedIcon />,
-  createTransfer: <SendOutlinedIcon />,
-  recipient: <PersonOutlineOutlinedIcon />,
-  transactions: <SyncAltOutlinedIcon />,
-  commission: <PaidOutlinedIcon />,
+  dashboard: <Box component="img" src={DashboardIcon} sx={{ width: 24, height: 24, filter: 'brightness(0) invert(1)' }} />,
+  customer: <Box component="img" src={CustomerIcon} sx={{ width: 24, height: 24, filter: 'brightness(0) invert(1)' }} />,
+  createTransfer: <Box component="img" src={CreateTransferIcon} sx={{ width: 24, height: 24, filter: 'brightness(0) invert(1)' }} />,
+  recipient: <Box component="img" src={RecipientIcon} sx={{ width: 24, height: 24, filter: 'brightness(0) invert(1)' }} />,
+  transactions: <Box component="img" src={TransactionsIcon} sx={{ width: 24, height: 24, filter: 'brightness(0) invert(1)' }} />,
+  commission: <Box component="img" src={CommissionIcon} sx={{ width: 24, height: 24, filter: 'brightness(0) invert(1)' }} />,
 };
 
 export function useNavData() {

@@ -3,9 +3,14 @@ import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
+import { useState, MouseEvent } from 'react';
+import Popover from '@mui/material/Popover';
+import { useNavigate } from 'react-router-dom';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -22,8 +27,25 @@ type Props = {
 
 export default function Header({ onOpenNav }: Props) {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const lgUp = useResponsive('up', 'lg');
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleProfileMenuOpen = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfileDetailsClick = () => {
+    navigate('/profile/details');
+    handleProfileMenuClose();
+  };
+
+  const isMenuOpen = Boolean(anchorEl);
 
   const renderContent = (
     <>
@@ -70,6 +92,7 @@ export default function Header({ onOpenNav }: Props) {
         </Button>
 
         <Button
+          onClick={handleProfileMenuOpen}
           endIcon={<Iconify icon="eva:arrow-ios-downward-fill" width={14} />}
           sx={{
             width: 135,
@@ -107,6 +130,98 @@ export default function Header({ onOpenNav }: Props) {
             </Box>
           </Stack>
         </Button>
+
+        <Popover
+          open={isMenuOpen}
+          anchorEl={anchorEl}
+          onClose={handleProfileMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          PaperProps={{
+            sx: {
+              width: 200,
+              borderRadius: '12px',
+              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
+              border: '1px solid #E5E7EB',
+              mt: 1,
+            },
+          }}
+        >
+          <Box sx={{ py: 1 }}>
+            {/* User Name Section */}
+            <Box sx={{ px: 2, py: 1.5 }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#010002' }}>
+                John Doe
+              </Typography>
+            </Box>
+            
+            {/* Divider */}
+            <Box sx={{ px: 2, my: 0.5 }}>
+              <Box sx={{ height: '1px', bgcolor: '#E5E7EB' }} />
+            </Box>
+            
+            {/* Menu Items */}
+            <MenuItem
+              onClick={handleProfileDetailsClick}
+              sx={{
+                px: 2,
+                py: 1.5,
+                fontSize: 14,
+                color: '#010002',
+                '&:hover': {
+                  backgroundColor: '#F9FAFB',
+                },
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Iconify icon="solar:user-bold" width={18} sx={{ color: '#6B7280' }} />
+                <Box>Profile Details</Box>
+              </Stack>
+            </MenuItem>
+            
+            <MenuItem
+              onClick={handleProfileMenuClose}
+              sx={{
+                px: 2,
+                py: 1.5,
+                fontSize: 14,
+                color: '#010002',
+                '&:hover': {
+                  backgroundColor: '#F9FAFB',
+                },
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Iconify icon="solar:lock-keyhole-bold" width={18} sx={{ color: '#6B7280' }} />
+                <Box>Change Password</Box>
+              </Stack>
+            </MenuItem>
+            
+            <MenuItem
+              onClick={handleProfileMenuClose}
+              sx={{
+                px: 2,
+                py: 1.5,
+                fontSize: 14,
+                color: '#010002',
+                '&:hover': {
+                  backgroundColor: '#F9FAFB',
+                },
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Iconify icon="solar:logout-2-bold" width={18} sx={{ color: '#6B7280' }} />
+                <Box>Logout</Box>
+              </Stack>
+            </MenuItem>
+          </Box>
+        </Popover>
 
         <IconButton
           sx={{

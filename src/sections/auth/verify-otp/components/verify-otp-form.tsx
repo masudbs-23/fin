@@ -20,6 +20,7 @@ import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import { OtpFlowContext, OTP_FLOW_CONTEXT_KEY } from 'src/types/auth-flow';
 import { formatErrorMessage } from 'src/utils/format-error-message';
+import EyeIcon from 'src/assets/auth/Eye.svg';
 
 type Props = {
   mode?: 'verify-otp' | 'device-binding';
@@ -475,11 +476,11 @@ export default function VerifyOtpForm({
               ))}
             </Box>
 
-            {(verifyOtpMutation.isPending || bindDeviceMutation.isPending) && (
+            {/* {(verifyOtpMutation.isPending || bindDeviceMutation.isPending) && (
               <Typography sx={{ fontSize: '13px', color: '#667085', mt: -1.25 }}>
                 {bindDeviceMutation.isPending ? 'Binding device...' : 'Verifying OTP...'}
               </Typography>
-            )}
+            )} */}
 
             <Box sx={{ textAlign: 'left', mt: 1 }}>
               <Typography
@@ -517,35 +518,41 @@ export default function VerifyOtpForm({
         </form>
       ) : (
         <FormProvider methods={passwordMethods} onSubmit={handlePasswordSubmit(handleSetPasswordSubmit)}>
-          <Stack spacing={2.5} sx={{ width: '100%', minWidth: 0, maxWidth: '100%' }}>
-            <Typography
-              variant="h3"
-              sx={{
-                fontSize: '36px',
-                fontWeight: 700,
-                color: '#191B1E',
-                lineHeight: 1.2,
-              }}
-            >
-              Set Password
-            </Typography>
+          <Box sx={{ width: '365px', mx: 'auto' }}>
+            <Stack spacing={2.5}>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontSize: '36px',
+                  fontWeight: 700,
+                  color: '#191B1E',
+                  lineHeight: 1.2,
+                  textAlign: 'left',
+                  ml: 0,
+                  pl: 0,
+                }}
+              >
+                Set Password
+              </Typography>
 
-            <Box
-              sx={{
-                border: '1px solid #EAECF0',
-                borderRadius: '12px',
-                p: 2.2,
-              }}
-            >
-              <Stack spacing={1.5}>
+              <Box
+                sx={{
+                  width: '100%',
+                  border: '1px solid #EAECF0',
+                  borderRadius: '12px',
+                  p: 2.2,
+                }}
+              >
+                <Stack spacing={1.5}>
                 <CustomInput
                   name="newPassword"
                   control={passwordControl}
                   label="New Password"
                   placeholder="Enter your new password"
                   type={newPassword.value ? 'text' : 'password'}
-                  endIcon={newPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                  endIconSvg={EyeIcon}
                   onEndIconClick={newPassword.onToggle}
+                  sx={{ width: '320px', mx: 'auto' }}
                 />
 
                 <CustomInput
@@ -554,16 +561,19 @@ export default function VerifyOtpForm({
                   label="Confirm Password"
                   placeholder="Enter your password"
                   type={confirmPassword.value ? 'text' : 'password'}
-                  endIcon={confirmPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                  endIconSvg={EyeIcon}
                   onEndIconClick={confirmPassword.onToggle}
+                  sx={{ width: '320px', mx: 'auto' }}
                 />
 
                 <Box
                   sx={{
+                    width: '320px',
                     borderRadius: '8px',
                     border: '1px solid #BFDBFE',
                     bgcolor: '#EFF6FF',
                     p: 1.3,
+                    mx: 'auto',
                   }}
                 >
                   <Typography sx={{ fontSize: 11, color: '#1570EF', fontWeight: 700, mb: 0.3 }}>
@@ -583,25 +593,26 @@ export default function VerifyOtpForm({
             </Box>
 
             <LoadingButton
-              fullWidth
               size="large"
               type="submit"
               variant="contained"
               loading={setNewPasswordMutation.isPending}
               sx={{
-                width: '100%',
+                width: '365px',
                 height: 48,
                 borderRadius: '12px',
                 backgroundColor: '#03BC00',
                 color: 'white',
                 fontSize: '16px',
                 fontWeight: 600,
+                mx: 'auto',
                 '&:hover': { backgroundColor: '#03A000' },
               }}
             >
               Submit
             </LoadingButton>
           </Stack>
+        </Box>
         </FormProvider>
       )}
     </>

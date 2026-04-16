@@ -3,6 +3,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -19,6 +20,8 @@ import {
   type NewPasswordFormValues,
 } from 'src/sections/auth/new-password/schema/index';
 import { formatErrorMessage } from 'src/utils/format-error-message';
+import LockIcon from 'src/assets/auth/Lock.svg';
+import EyeIcon from 'src/assets/auth/Eye.svg';
 
 export default function NewPasswordForm() {
   const router = useRouter();
@@ -74,10 +77,29 @@ export default function NewPasswordForm() {
             label="Password"
             type={password.value ? 'text' : 'password'}
             InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Box
+                    component="img"
+                    src={LockIcon}
+                    sx={{
+                      width: 24,
+                      height: 24,
+                    }}
+                  />
+                </InputAdornment>
+              ),
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={password.onToggle} edge="end">
-                    <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                    <Box
+                      component="img"
+                      src={EyeIcon}
+                      sx={{
+                        width: 24,
+                        height: 24,
+                      }}
+                    />
                   </IconButton>
                 </InputAdornment>
               ),
@@ -89,10 +111,29 @@ export default function NewPasswordForm() {
             label="Confirm New Password"
             type={password.value ? 'text' : 'password'}
             InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Box
+                    component="img"
+                    src={LockIcon}
+                    sx={{
+                      width: 24,
+                      height: 24,
+                    }}
+                  />
+                </InputAdornment>
+              ),
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={password.onToggle} edge="end">
-                    <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                    <Box
+                      component="img"
+                      src={EyeIcon}
+                      sx={{
+                        width: 24,
+                        height: 24,
+                      }}
+                    />
                   </IconButton>
                 </InputAdornment>
               ),

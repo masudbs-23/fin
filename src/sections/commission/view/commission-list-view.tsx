@@ -227,7 +227,6 @@ export default function CommissionListView() {
             height: 38,
             display: 'flex',
             alignItems: 'center',
-            px: 0.75,
             borderRadius: '10px',
             bgcolor: '#FFFFFF',
           }}

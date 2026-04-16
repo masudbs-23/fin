@@ -28,6 +28,9 @@ import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import Iconify from 'src/components/iconify';
 import AuthLogoSvg from 'src/assets/auth/Auth_Logo.svg';
 import { CustomInput } from 'src/components/custom-input';
+import EmailIcon from 'src/assets/auth/Email.svg';
+import LockIcon from 'src/assets/auth/Lock.svg';
+import EyeIcon from 'src/assets/auth/Eye.svg';
 // ----------------------------------------------------------------------
 
 export default function JwtLoginView() {
@@ -145,7 +148,7 @@ export default function JwtLoginView() {
         control={methods.control}
         label="Email Address"
         placeholder="Test@gmail.com"
-        icon="solar:letter-bold"
+        iconSvg={EmailIcon}
       />
 
       <CustomInput
@@ -154,8 +157,8 @@ export default function JwtLoginView() {
         label="Password"
         placeholder="Enter your password"
         type={password.value ? 'text' : 'password'}
-        icon="solar:lock-password-bold"
-        endIcon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+        iconSvg={LockIcon}
+        endIconSvg={EyeIcon}
         onEndIconClick={password.onToggle}
       />
 

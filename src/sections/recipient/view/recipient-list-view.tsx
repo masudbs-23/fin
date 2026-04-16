@@ -205,7 +205,7 @@ export default function RecipientListView() {
     <>
       <Stack spacing={2.5}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#191B1E' }}>Recipient</Typography>
+          <Typography sx={{ fontSize: 18, fontWeight: 500, color: '#191B1E' }}>Recipient</Typography>
           <Button
             variant="contained"
             sx={{

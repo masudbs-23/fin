@@ -11,11 +11,14 @@ interface CustomInputProps<T extends FieldValues = FieldValues> {
   type?: string;
   icon?: string;
   endIcon?: string;
+  iconSvg?: any;
+  endIconSvg?: any;
   onEndIconClick?: () => void;
   disabled?: boolean;
   error?: boolean;
   helperText?: string;
   autoFillSaved?: boolean;
+  sx?: any;
 }
 
 export function CustomInput<T extends FieldValues = FieldValues>({
@@ -26,11 +29,14 @@ export function CustomInput<T extends FieldValues = FieldValues>({
   type = 'text',
   icon,
   endIcon,
+  iconSvg,
+  endIconSvg,
   onEndIconClick,
   disabled = false,
   error = false,
   helperText,
   autoFillSaved = false,
+  sx,
 }: CustomInputProps<T>) {
   return (
     <Controller
@@ -51,7 +57,7 @@ export function CustomInput<T extends FieldValues = FieldValues>({
             </Typography>
           )}
           <Box sx={{ position: 'relative', width: '100%' }}>
-            {icon && (
+            {icon && !iconSvg && (
               <Box
                 sx={{
                   position: 'absolute',
@@ -65,6 +71,27 @@ export function CustomInput<T extends FieldValues = FieldValues>({
                 <Iconify icon={icon} width={20} height={20} color="#010002" />
               </Box>
             )}
+            {iconSvg && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  left: '14px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 1,
+                  pointerEvents: 'none',
+                }}
+              >
+                <Box
+                  component="img"
+                  src={iconSvg}
+                  sx={{
+                    width: 24,
+                    height: 24,
+                  }}
+                />
+              </Box>
+            )}
             <TextField
               {...field}
               fullWidth
@@ -74,7 +101,7 @@ export function CustomInput<T extends FieldValues = FieldValues>({
               disabled={disabled}
               error={error || !!fieldError}
               InputProps={{
-                endAdornment: endIcon && (
+                endAdornment: ((endIcon && !endIconSvg) && (
                   <InputAdornment position="end">
                     <Iconify 
                       icon={endIcon} 
@@ -84,12 +111,25 @@ export function CustomInput<T extends FieldValues = FieldValues>({
                       onClick={onEndIconClick}
                     />
                   </InputAdornment>
-                ),
+                )) || (endIconSvg && (
+                  <InputAdornment position="end">
+                    <Box
+                      component="img"
+                      src={endIconSvg}
+                      onClick={onEndIconClick}
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        cursor: onEndIconClick ? 'pointer' : 'default',
+                      }}
+                    />
+                  </InputAdornment>
+                )),
               }}
             sx={{
-              width: '100%',
-              maxWidth: '100%',
-              minWidth: 0,
+              width: sx?.width || '100%',
+              maxWidth: sx?.width || '100%',
+              minWidth: sx?.width || 0,
               '& .MuiOutlinedInput-root': {
                 height: 44,
                 minHeight: 44,
@@ -116,11 +156,12 @@ export function CustomInput<T extends FieldValues = FieldValues>({
                 minHeight: 44,
                 py: 0,
                 boxSizing: 'border-box',
-                padding: '0 14px 0 45px',
+                padding: iconSvg || icon ? '0 14px 0 45px' : '0 14px 0 14px',
                 fontSize: '14px',
                 '&::placeholder': {
                   color: '#9CA3AF',
                   opacity: 1,
+                  paddingLeft: iconSvg || icon ? '8px' : '0',
                 },
                 '&:-webkit-autofill': {
                   WebkitTextFillColor: '#000000',

@@ -26,6 +26,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { useGetTransactionDetails, useGetTransactionList } from 'src/query/hooks/transaction';
+import { TransactionDetails, TransactionListItem } from 'src/types/transaction';
 
 const STATUS_OPTIONS = ['All Status', 'Success', 'Pending', 'Failed'];
 const PAYOUT_TYPES = ['All Types', 'Bank Transfer', 'Cash Pickup', 'Wallet'];
@@ -45,6 +46,7 @@ export default function TransactionsListView() {
     recipientMobileNumber: '',
   });
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
+  const [selectedTransactionRow, setSelectedTransactionRow] = useState<TransactionListItem | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: transactionListResponse } = useGetTransactionList(filters);
@@ -64,6 +66,24 @@ export default function TransactionsListView() {
       return customerMatch && recipientMatch && statusMatch && payoutMatch;
     });
   }, [filters, transactionListResponse?.data?.list]);
+
+  const dialogDetails = useMemo<TransactionDetails | null>(() => {
+    if (transactionDetails?.transactionId) return transactionDetails;
+    if (!selectedTransactionRow) return null;
+
+    return {
+      id: selectedTransactionRow.id,
+      dateTime: selectedTransactionRow.dateTime,
+      transactionId: selectedTransactionRow.transactionId,
+      status: selectedTransactionRow.status,
+      customerName: 'N/A',
+      customerMobile: selectedTransactionRow.customerMobile,
+      recipientName: 'N/A',
+      recipientMobile: selectedTransactionRow.recipientMobile,
+      transactionAmount: selectedTransactionRow.amount,
+      payoutMethod: selectedTransactionRow.payoutMethod,
+    };
+  }, [selectedTransactionRow, transactionDetails]);
 
   const inputSx = {
     width: { xs: '100%', sm: '200px', md: '288px', lg: '288px', xl: '288px' },
@@ -317,6 +337,7 @@ export default function TransactionsListView() {
                         startIcon={<VisibilityOutlinedIcon fontSize="small" />}
                         onClick={() => {
                           setSelectedTransactionId(row.transactionId);
+                          setSelectedTransactionRow(row);
                           setIsDialogOpen(true);
                         }}
                         sx={{
@@ -344,7 +365,10 @@ export default function TransactionsListView() {
 
       <Dialog
         open={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        onClose={() => {
+          setIsDialogOpen(false);
+          setSelectedTransactionRow(null);
+        }}
         maxWidth="md"
         fullWidth
         PaperProps={{
@@ -365,24 +389,24 @@ export default function TransactionsListView() {
                 <Stack spacing={0.3}>
                   <Typography sx={{ color: '#667085', fontSize: 12 }}>Date & Time</Typography>
                   <Typography sx={{ fontSize: 16, fontWeight: 500, color: '#101828' }}>
-                    {transactionDetails?.dateTime || '-'}
+                    {dialogDetails?.dateTime || '-'}
                   </Typography>
                 </Stack>
                 <Stack spacing={0.3}>
                   <Typography sx={{ color: '#667085', fontSize: 12 }}>Transaction ID</Typography>
                   <Typography sx={{ fontSize: 19, fontWeight: 500, color: '#03BC00' }}>
-                    {transactionDetails?.transactionId || '-'}
+                    {dialogDetails?.transactionId || '-'}
                   </Typography>
                 </Stack>
               </Stack>
-              {transactionDetails?.status && (
+              {dialogDetails?.status && (
                 <Chip
-                  label={transactionDetails.status}
+                  label={dialogDetails.status}
                   sx={{
                     height: 37,
                     px: 1.1,
-                    bgcolor: getStatusColor(transactionDetails.status).bg,
-                    color: getStatusColor(transactionDetails.status).text,
+                    bgcolor: getStatusColor(dialogDetails.status).bg,
+                    color: getStatusColor(dialogDetails.status).text,
                     borderRadius: '999px',
                     fontSize: 14,
                     fontWeight: 500,
@@ -395,25 +419,25 @@ export default function TransactionsListView() {
               <Grid item xs={12} md={4}>
                 <Typography sx={{ color: '#667085', fontSize: 12 }}>Customer Name & Mobile</Typography>
                 <Typography sx={{ mt: 0.5, fontSize: 16, fontWeight: 500, color: '#101828' }}>
-                  {transactionDetails?.customerName || '-'}
+                  {dialogDetails?.customerName || '-'}
                 </Typography>
                 <Typography sx={{ mt: 0.4, color: '#667085', fontSize: 14 }}>
-                  {transactionDetails?.customerMobile || '-'}
+                  {dialogDetails?.customerMobile || '-'}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={4}>
                 <Typography sx={{ color: '#667085', fontSize: 12 }}>Recipient Name & Mobile</Typography>
                 <Typography sx={{ mt: 0.5, fontSize: 16, fontWeight: 500, color: '#101828' }}>
-                  {transactionDetails?.recipientName || '-'}
+                  {dialogDetails?.recipientName || '-'}
                 </Typography>
                 <Typography sx={{ mt: 0.4, color: '#667085', fontSize: 14 }}>
-                  {transactionDetails?.recipientMobile || '-'}
+                  {dialogDetails?.recipientMobile || '-'}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={4}>
                 <Typography sx={{ color: '#667085', fontSize: 12 }}>Transaction Amount</Typography>
                 <Typography sx={{ mt: 0.6, fontSize: 18, fontWeight: 500, color: '#101828' }}>
-                  {transactionDetails?.transactionAmount || '-'}
+                  {dialogDetails?.transactionAmount || '-'}
                 </Typography>
               </Grid>
             </Grid>
@@ -421,7 +445,7 @@ export default function TransactionsListView() {
             <Stack spacing={0.75}>
               <Typography sx={{ color: '#667085', fontSize: 12 }}>Payout Method</Typography>
               <Chip
-                label={transactionDetails?.payoutMethod || '-'}
+                label={dialogDetails?.payoutMethod || '-'}
                 sx={{
                   width: 'fit-content',
                   px: 1.2,
@@ -438,7 +462,10 @@ export default function TransactionsListView() {
         </DialogContent>
         <DialogActions sx={{ px: 2.5, pb: 2.5 }}>
           <Button
-            onClick={() => setIsDialogOpen(false)}
+            onClick={() => {
+              setIsDialogOpen(false);
+              setSelectedTransactionRow(null);
+            }}
             sx={{
               width: 152,
               height: 48,
