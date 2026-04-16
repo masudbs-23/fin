@@ -956,6 +956,7 @@ export default function CustomersListView() {
         PaperProps={{
           sx: {
             width: { md: '711px', xs: 'calc(100% - 24px)' },
+            height: '455px',
             borderRadius: '12px',
             m: 1.5,
           },
