@@ -4,7 +4,6 @@ import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownR
 import {
   Box,
   Chip,
-  Container,
   Grid,
   IconButton,
   MenuItem,
@@ -18,6 +17,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useGetCreateTransferList } from 'src/query/hooks/create-transfer';
 import { CreateTransferListItem } from 'src/types/create-transfer';
 
@@ -80,28 +80,41 @@ const MOCK_TRANSFER_ROWS: CreateTransferListItem[] = [
 ];
 
 export default function CreateTransferListView() {
-  const [filters, setFilters] = useState({
-    customerMobileNumber: '',
-    recipientMobileNumber: '',
-    payoutType: '',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialFilters = {
+    customerMobileNumber: searchParams.get('customerMobileNumber') || '',
+    recipientMobileNumber: searchParams.get('recipientMobileNumber') || '',
+    payoutType: searchParams.get('payoutType') || '',
+  };
+  const [filters, setFilters] = useState(initialFilters);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
 
   // Keep hook ready for API integration; UI currently renders mock rows by design.
-  const { data } = useGetCreateTransferList(filters, false);
+  const { data } = useGetCreateTransferList(appliedFilters, false);
 
   const rows = useMemo(() => {
     const apiRows = data?.data?.list || [];
     const list = MOCK_TRANSFER_ROWS.length ? MOCK_TRANSFER_ROWS : apiRows;
     return list.filter((row) => {
-      const customerMobileMatch = filters.customerMobileNumber
-        ? row.mobileNumber.toLowerCase().includes(filters.customerMobileNumber.toLowerCase())
+      const customerMobileMatch = appliedFilters.customerMobileNumber
+        ? row.mobileNumber.toLowerCase().includes(appliedFilters.customerMobileNumber.toLowerCase())
         : true;
-      const recipientMobileMatch = filters.recipientMobileNumber
-        ? row.mobileNumber.toLowerCase().includes(filters.recipientMobileNumber.toLowerCase())
+      const recipientMobileMatch = appliedFilters.recipientMobileNumber
+        ? row.mobileNumber.toLowerCase().includes(appliedFilters.recipientMobileNumber.toLowerCase())
         : true;
       return customerMobileMatch && recipientMobileMatch;
     });
-  }, [data?.data?.list, filters.customerMobileNumber, filters.recipientMobileNumber]);
+  }, [data?.data?.list, appliedFilters.customerMobileNumber, appliedFilters.recipientMobileNumber]);
+
+  const handleSearch = () => {
+    setAppliedFilters({ ...filters });
+
+    const params = new URLSearchParams();
+    if (filters.customerMobileNumber) params.set('customerMobileNumber', filters.customerMobileNumber);
+    if (filters.recipientMobileNumber) params.set('recipientMobileNumber', filters.recipientMobileNumber);
+    if (filters.payoutType) params.set('payoutType', filters.payoutType);
+    setSearchParams(params, { replace: true });
+  };
 
   const inputSx = {
     '& .MuiOutlinedInput-root': {
@@ -211,6 +224,7 @@ export default function CreateTransferListView() {
           </Grid>
           <Grid item xs={12} md={3}>
             <IconButton
+              onClick={handleSearch}
               sx={{
                 width: 44,
                 height: 40,

@@ -28,6 +28,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import * as yup from 'yup';
 import { useCreateCustomer, useGetCustomerDetails, useGetCustomerList, useUpdateCustomer } from 'src/query/hooks/customer';
 import { CreateCustomerPayload, Customer, UpdateCustomerPayload } from 'src/types/customers';
@@ -193,17 +194,20 @@ const MOCK_CUSTOMERS: Customer[] = [
 ];
 
 export default function CustomersListView() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const defaultFilters = {
     mobileNumber: '',
     nidNumber: '',
     country: '',
   };
+  const initialFilters = {
+    mobileNumber: searchParams.get('mobileNumber') || '',
+    nidNumber: searchParams.get('nidNumber') || '',
+    country: searchParams.get('country') || '',
+  };
 
-  const [filters, setFilters] = useState({
-    ...defaultFilters,
-    country: '',
-  });
-  const [appliedFilters, setAppliedFilters] = useState({ ...defaultFilters });
+  const [filters, setFilters] = useState(initialFilters);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
@@ -226,11 +230,22 @@ export default function CustomersListView() {
   const updateCustomerMutation = useUpdateCustomer();
   const createCustomerMutation = useCreateCustomer();
 
-  const filteredCustomers = useMemo(() => customers, [customers]);
+  const filteredCustomers = useMemo(() => {
+    const mobile = appliedFilters.mobileNumber.trim().toLowerCase();
+    const nid = appliedFilters.nidNumber.trim().toLowerCase();
+    const country = appliedFilters.country.trim().toLowerCase();
+
+    return customers.filter((customer) => {
+      const mobileMatch = mobile ? customer.phoneNumber.toLowerCase().includes(mobile) : true;
+      const nidMatch = nid ? customer.nidNumber.toLowerCase().includes(nid) : true;
+      const countryMatch = country ? customer.country.toLowerCase() === country : true;
+      return mobileMatch && nidMatch && countryMatch;
+    });
+  }, [customers, appliedFilters.country, appliedFilters.mobileNumber, appliedFilters.nidNumber]);
 
   useEffect(() => {
-    const apiCustomers = customerListResponse?.data?.customers || [];
-    if (apiCustomers.length) {
+    const apiCustomers = customerListResponse?.data?.customers;
+    if (Array.isArray(apiCustomers)) {
       setCustomers(apiCustomers);
     }
   }, [customerListResponse?.data?.customers]);
@@ -342,6 +357,12 @@ export default function CustomersListView() {
       appliedFilters.mobileNumber === filters.mobileNumber &&
       appliedFilters.nidNumber === filters.nidNumber &&
       appliedFilters.country === filters.country;
+
+    const params = new URLSearchParams();
+    if (filters.mobileNumber) params.set('mobileNumber', filters.mobileNumber);
+    if (filters.nidNumber) params.set('nidNumber', filters.nidNumber);
+    if (filters.country) params.set('country', filters.country);
+    setSearchParams(params, { replace: true });
 
     if (isSameFilters) {
       await refetchCustomerList();

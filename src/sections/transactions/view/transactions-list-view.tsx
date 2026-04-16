@@ -25,6 +25,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useGetTransactionDetails, useGetTransactionList } from 'src/query/hooks/transaction';
 import { TransactionDetails, TransactionListItem } from 'src/types/transaction';
 
@@ -38,34 +39,50 @@ const getStatusColor = (status: string) => {
 };
 
 export default function TransactionsListView() {
-  const [filters, setFilters] = useState({
-    date: '',
-    status: 'All Status',
-    payoutType: 'All Types',
-    customerMobileNumber: '',
-    recipientMobileNumber: '',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialFilters = {
+    date: searchParams.get('date') || '',
+    status: searchParams.get('status') || 'All Status',
+    payoutType: searchParams.get('payoutType') || 'All Types',
+    customerMobileNumber: searchParams.get('customerMobileNumber') || '',
+    recipientMobileNumber: searchParams.get('recipientMobileNumber') || '',
+  };
+  const [filters, setFilters] = useState(initialFilters);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
   const [selectedTransactionRow, setSelectedTransactionRow] = useState<TransactionListItem | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { data: transactionListResponse } = useGetTransactionList(filters);
+  const { data: transactionListResponse } = useGetTransactionList(appliedFilters);
   const { data: transactionDetails } = useGetTransactionDetails(selectedTransactionId || undefined, isDialogOpen);
 
   const rows = useMemo(() => {
     const list = transactionListResponse?.data?.list || [];
     return list.filter((row) => {
-      const customerMatch = filters.customerMobileNumber
-        ? row.customerMobile.toLowerCase().includes(filters.customerMobileNumber.toLowerCase())
+      const customerMatch = appliedFilters.customerMobileNumber
+        ? row.customerMobile.toLowerCase().includes(appliedFilters.customerMobileNumber.toLowerCase())
         : true;
-      const recipientMatch = filters.recipientMobileNumber
-        ? row.recipientMobile.toLowerCase().includes(filters.recipientMobileNumber.toLowerCase())
+      const recipientMatch = appliedFilters.recipientMobileNumber
+        ? row.recipientMobile.toLowerCase().includes(appliedFilters.recipientMobileNumber.toLowerCase())
         : true;
-      const statusMatch = filters.status === 'All Status' ? true : row.status === filters.status;
-      const payoutMatch = filters.payoutType === 'All Types' ? true : row.payoutMethod === filters.payoutType;
+      const statusMatch = appliedFilters.status === 'All Status' ? true : row.status === appliedFilters.status;
+      const payoutMatch =
+        appliedFilters.payoutType === 'All Types' ? true : row.payoutMethod === appliedFilters.payoutType;
       return customerMatch && recipientMatch && statusMatch && payoutMatch;
     });
-  }, [filters, transactionListResponse?.data?.list]);
+  }, [appliedFilters, transactionListResponse?.data?.list]);
+
+  const handleSearch = () => {
+    setAppliedFilters({ ...filters });
+
+    const params = new URLSearchParams();
+    if (filters.date) params.set('date', filters.date);
+    if (filters.status !== 'All Status') params.set('status', filters.status);
+    if (filters.payoutType !== 'All Types') params.set('payoutType', filters.payoutType);
+    if (filters.customerMobileNumber) params.set('customerMobileNumber', filters.customerMobileNumber);
+    if (filters.recipientMobileNumber) params.set('recipientMobileNumber', filters.recipientMobileNumber);
+    setSearchParams(params, { replace: true });
+  };
 
   const dialogDetails = useMemo<TransactionDetails | null>(() => {
     if (transactionDetails?.transactionId) return transactionDetails;
@@ -86,7 +103,7 @@ export default function TransactionsListView() {
   }, [selectedTransactionRow, transactionDetails]);
 
   const inputSx = {
-    width: { xs: '100%', sm: '200px', md: '288px', lg: '288px', xl: '288px' },
+    width: '100%',
     '& .MuiOutlinedInput-root': {
       height: 40,
       borderRadius: '8px',
@@ -143,11 +160,11 @@ export default function TransactionsListView() {
           Transactions
         </Typography>
 
-        <Box sx={{ width: { xs: '100%', md: '1097px' }, height: '167px', overflowX: 'auto' }}>
-          <Stack spacing="20px" sx={{ height: '100%' }}>
+        <Box sx={{ width: '100%', maxWidth: '100%' }}>
+          <Stack spacing="20px">
             {/* First Row: Date, Status, Payout Type, Search/Download */}
-            <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end' }}>
-              <Box sx={{ flex: 1 }}>
+            <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', flexWrap: 'wrap' }}>
+              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Date</Typography>
                 <DatePicker
                   value={filters.date ? dayjs(filters.date) : null}
@@ -168,7 +185,7 @@ export default function TransactionsListView() {
                   }}
                 />
               </Box>
-              <Box sx={{ flex: 1 }}>
+              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Status</Typography>
                 <TextField
                   fullWidth
@@ -186,7 +203,7 @@ export default function TransactionsListView() {
                   ))}
                 </TextField>
               </Box>
-              <Box sx={{ flex: 1 }}>
+              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>Payout Type</Typography>
                 <TextField
                   fullWidth
@@ -204,9 +221,10 @@ export default function TransactionsListView() {
                   ))}
                 </TextField>
               </Box>
-              <Box sx={{ flex: 1 }}>
+              <Box sx={{ flex: '1 1 auto' }}>
                 <Stack direction="row" spacing={1} sx={{ justifyContent: { xs: 'flex-start', sm: 'flex-start' } }}>
                   <IconButton
+                    onClick={handleSearch}
                     sx={{
                       width: 44,
                       height: 40,
@@ -249,8 +267,8 @@ export default function TransactionsListView() {
             </Box>
 
             {/* Second Row: Customer Mobile Number, Recipient Mobile Number */}
-            <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', justifyContent: 'flex-start' }}>
-              <Box sx={{ width: '288px' }}>
+            <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>
                   Customer Mobile Number
                 </Typography>
@@ -268,7 +286,7 @@ export default function TransactionsListView() {
                   sx={inputSx}
                 />
               </Box>
-              <Box sx={{ width: '288px' }}>
+              <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
                 <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 14, sm: 16 }, color: '#667085' }}>
                   Recipient Mobile Number
                 </Typography>

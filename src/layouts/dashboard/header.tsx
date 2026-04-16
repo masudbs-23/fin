@@ -11,14 +11,20 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { useState, MouseEvent } from 'react';
 import Popover from '@mui/material/Popover';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
+import { useAuthContext } from 'src/auth/hooks';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import SvgColor from 'src/components/svg-color';
 import Iconify from 'src/components/iconify';
 import AuthLogoSvg from 'src/assets/auth/Auth_Logo.svg';
 import NotificationIcon from 'src/assets/dashbaord/Notifications.svg';
+import SettingsIcon from 'src/assets/popover/Settings.svg';
+import LockIcon from 'src/assets/popover/Lock.svg';
+import LogoutIcon from 'src/assets/popover/Logout.svg';
 import { HEADER } from 'src/layouts/config-layout';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +35,8 @@ type Props = {
 export default function Header({ onOpenNav }: Props) {
   const theme = useTheme();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { logout } = useAuthContext();
 
   const lgUp = useResponsive('up', 'lg');
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -44,6 +52,20 @@ export default function Header({ onOpenNav }: Props) {
   const handleProfileDetailsClick = () => {
     navigate('/profile/details');
     handleProfileMenuClose();
+  };
+
+  const handleLogoutClick = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      localStorage.clear();
+      sessionStorage.clear();
+      queryClient.clear();
+      handleProfileMenuClose();
+      navigate(paths.auth.login, { replace: true });
+    }
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -183,7 +205,14 @@ export default function Header({ onOpenNav }: Props) {
               }}
             >
               <Stack direction="row" alignItems="center" spacing={2}>
-                <Iconify icon="solar:user-bold" width={18} sx={{ color: '#6B7280' }} />
+                <Box
+                  component="img"
+                  src={SettingsIcon}
+                  sx={{
+                    width: 18,
+                    height: 18,
+                  }}
+                />
                 <Box>Profile Details</Box>
               </Stack>
             </MenuItem>
@@ -201,13 +230,20 @@ export default function Header({ onOpenNav }: Props) {
               }}
             >
               <Stack direction="row" alignItems="center" spacing={2}>
-                <Iconify icon="solar:lock-keyhole-bold" width={18} sx={{ color: '#6B7280' }} />
+                <Box
+                  component="img"
+                  src={LockIcon}
+                  sx={{
+                    width: 18,
+                    height: 18,
+                  }}
+                />
                 <Box>Change Password</Box>
               </Stack>
             </MenuItem>
             
             <MenuItem
-              onClick={handleProfileMenuClose}
+              onClick={handleLogoutClick}
               sx={{
                 px: 2,
                 py: 1.5,
@@ -219,7 +255,14 @@ export default function Header({ onOpenNav }: Props) {
               }}
             >
               <Stack direction="row" alignItems="center" spacing={2}>
-                <Iconify icon="solar:logout-2-bold" width={18} sx={{ color: '#6B7280' }} />
+                <Box
+                  component="img"
+                  src={LogoutIcon}
+                  sx={{
+                    width: 18,
+                    height: 18,
+                  }}
+                />
                 <Box>Logout</Box>
               </Stack>
             </MenuItem>

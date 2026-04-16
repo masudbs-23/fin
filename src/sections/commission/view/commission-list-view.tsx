@@ -15,6 +15,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useGetCommissionList } from 'src/query/hooks/commission';
 import { CommissionListItem } from 'src/types/commission';
 
@@ -76,16 +77,19 @@ const MOCK_COMMISSION_ROWS: CommissionListItem[] = [
 ];
 
 export default function CommissionListView() {
-  const [filters, setFilters] = useState({
-    fromDate: '',
-    toDate: '',
-    customerMobileNumber: '',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialFilters = {
+    fromDate: searchParams.get('fromDate') || '',
+    toDate: searchParams.get('toDate') || '',
+    customerMobileNumber: searchParams.get('customerMobileNumber') || '',
+  };
+  const [filters, setFilters] = useState(initialFilters);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
 
-  const { data: commissionListResponse } = useGetCommissionList(filters);
+  const { data: commissionListResponse } = useGetCommissionList(appliedFilters);
 
   const inputSx = {
-    width: { xs: '100%', sm: '200px', md: '288px', lg: '288px', xl: '288px' },
+    width: '100%',
     '& .MuiOutlinedInput-root': {
       height: 40,
       borderRadius: '8px',
@@ -142,11 +146,21 @@ export default function CommissionListView() {
     const apiRows = commissionListResponse?.data?.list || [];
     const list = apiRows.length ? apiRows : MOCK_COMMISSION_ROWS;
     return list.filter((row) =>
-      filters.customerMobileNumber
-        ? row.customerMobile.toLowerCase().includes(filters.customerMobileNumber.toLowerCase())
+      appliedFilters.customerMobileNumber
+        ? row.customerMobile.toLowerCase().includes(appliedFilters.customerMobileNumber.toLowerCase())
         : true
     );
-  }, [commissionListResponse?.data?.list, filters.customerMobileNumber]);
+  }, [commissionListResponse?.data?.list, appliedFilters.customerMobileNumber]);
+
+  const handleSearch = () => {
+    setAppliedFilters({ ...filters });
+
+    const params = new URLSearchParams();
+    if (filters.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters.toDate) params.set('toDate', filters.toDate);
+    if (filters.customerMobileNumber) params.set('customerMobileNumber', filters.customerMobileNumber);
+    setSearchParams(params, { replace: true });
+  };
 
   return (
     <>
@@ -155,9 +169,9 @@ export default function CommissionListView() {
           Commission
         </Typography>
 
-        <Box sx={{ width: { xs: '100%', md: '1097px' }, height: '68px', overflowX: 'auto' }}>
-          <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', height: '100%' }}>
-            <Box sx={{ flex: 1 }}>
+        <Box sx={{ width: '100%', maxWidth: '100%' }}>
+          <Box sx={{ display: 'flex', gap: '20px', alignItems: 'end', flexWrap: 'wrap' }}>
+            <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>From Date</Typography>
               <DatePicker
                 value={filters.fromDate ? dayjs(filters.fromDate) : null}
@@ -178,7 +192,7 @@ export default function CommissionListView() {
                 }}
               />
             </Box>
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>To Date</Typography>
               <DatePicker
                 value={filters.toDate ? dayjs(filters.toDate) : null}
@@ -199,7 +213,7 @@ export default function CommissionListView() {
                 }}
               />
             </Box>
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
               <Typography sx={{ mb: { xs: 0.5, sm: 0.75 }, fontSize: 16, fontWeight: 400, color: '#667085' }}>Customer Mobile Number</Typography>
               <TextField
                 fullWidth
@@ -215,9 +229,10 @@ export default function CommissionListView() {
                 sx={inputSx}
               />
             </Box>
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: '1 1 auto' }}>
               <Stack direction="row" spacing={1} sx={{ justifyContent: { xs: 'flex-start', sm: 'flex-start' } }}>
                 <IconButton
+                  onClick={handleSearch}
                   sx={{
                     width: 44,
                     height: 40,

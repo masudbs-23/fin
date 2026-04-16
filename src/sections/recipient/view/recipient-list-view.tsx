@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Chip,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -25,6 +24,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useGetRecipientList, useUpdateRecipient } from 'src/query/hooks/recipient';
 import { RecipientItem, RecipientStatus, UpdateRecipientPayload } from 'src/types/recipient';
 
@@ -116,11 +116,14 @@ const MOCK_RECIPIENT_ROWS: RecipientItem[] = [
 ];
 
 export default function RecipientListView() {
-  const [filters, setFilters] = useState({
-    customerMobileNumber: '',
-    recipientMobileNumber: '',
-    payoutType: '',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialFilters = {
+    customerMobileNumber: searchParams.get('customerMobileNumber') || '',
+    recipientMobileNumber: searchParams.get('recipientMobileNumber') || '',
+    payoutType: searchParams.get('payoutType') || '',
+  };
+  const [filters, setFilters] = useState(initialFilters);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
   const [rows, setRows] = useState<RecipientItem[]>(MOCK_RECIPIENT_ROWS);
   const [selectedRecipient, setSelectedRecipient] = useState<RecipientItem | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -133,22 +136,35 @@ export default function RecipientListView() {
   });
 
   // Keep hook ready for API integration; UI currently renders mock rows by design.
-  const { data } = useGetRecipientList(filters, false);
+  const { data } = useGetRecipientList(appliedFilters, false);
   const updateRecipientMutation = useUpdateRecipient();
 
   const filteredRows = useMemo(
     () =>
       rows.filter((row) => {
-        const customerMatch = filters.customerMobileNumber
-          ? row.customerMobile.toLowerCase().includes(filters.customerMobileNumber.toLowerCase())
+        const customerMatch = appliedFilters.customerMobileNumber
+          ? row.customerMobile.toLowerCase().includes(appliedFilters.customerMobileNumber.toLowerCase())
           : true;
-        const recipientMatch = filters.recipientMobileNumber
-          ? row.recipientMobile.toLowerCase().includes(filters.recipientMobileNumber.toLowerCase())
+        const recipientMatch = appliedFilters.recipientMobileNumber
+          ? row.recipientMobile.toLowerCase().includes(appliedFilters.recipientMobileNumber.toLowerCase())
           : true;
-        return customerMatch && recipientMatch;
+        const payoutTypeMatch = appliedFilters.payoutType
+          ? row.payoutMethod.toLowerCase().includes(appliedFilters.payoutType.toLowerCase())
+          : true;
+        return customerMatch && recipientMatch && payoutTypeMatch;
       }),
-    [rows, filters.customerMobileNumber, filters.recipientMobileNumber]
+    [rows, appliedFilters.customerMobileNumber, appliedFilters.recipientMobileNumber, appliedFilters.payoutType]
   );
+
+  const handleSearch = () => {
+    setAppliedFilters({ ...filters });
+
+    const params = new URLSearchParams();
+    if (filters.customerMobileNumber) params.set('customerMobileNumber', filters.customerMobileNumber);
+    if (filters.recipientMobileNumber) params.set('recipientMobileNumber', filters.recipientMobileNumber);
+    if (filters.payoutType) params.set('payoutType', filters.payoutType);
+    setSearchParams(params, { replace: true });
+  };
 
   const inputSx = {
     '& .MuiOutlinedInput-root': {
@@ -312,6 +328,7 @@ export default function RecipientListView() {
           <Grid item xs={12} md={3}>
             <Stack direction="row" spacing={1}>
               <IconButton
+                onClick={handleSearch}
                 sx={{
                   width: 44,
                   height: 40,
