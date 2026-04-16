@@ -17,6 +17,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import SvgColor from 'src/components/svg-color';
 import Iconify from 'src/components/iconify';
 import AuthLogoSvg from 'src/assets/auth/Auth_Logo.svg';
+import NotificationIcon from 'src/assets/dashbaord/Notifications.svg';
 import { HEADER } from 'src/layouts/config-layout';
 
 // ----------------------------------------------------------------------
@@ -72,16 +73,18 @@ export default function Header({ onOpenNav }: Props) {
         <Button
           variant="contained"
           sx={{
-            width: 182,
-            height: 44,
-            px: 2,
+            width: '182px',
+            height: '44px',
+            padding: '15px 20px',
             borderRadius: '12px',
             backgroundColor: '#A3EBB1',
-            color: '#101828',
-            fontSize: 16,
+            color: '#010002',
+            fontSize: '16px',
             fontWeight: 500,
             textTransform: 'none',
             boxShadow: 'none',
+            gap: '10px',
+            whiteSpace: 'nowrap',
             '&:hover': {
               boxShadow: 'none',
               backgroundColor: '#94E4A4',
@@ -231,8 +234,15 @@ export default function Header({ onOpenNav }: Props) {
             borderRadius: 0,
           }}
         >
-          <Badge color="error" variant="dot">
-            <Iconify icon="solar:bell-linear" width={24} />
+          <Badge color="error" >
+            <Box
+              component="img"
+              src={NotificationIcon}
+              sx={{
+                width: 24,
+                height: 24,
+              }}
+            />
           </Badge>
         </IconButton>
       </Stack>

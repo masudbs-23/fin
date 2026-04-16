@@ -1,5 +1,5 @@
-import SearchIcon from '@mui/icons-material/Search';
-import DownloadIcon from '@mui/icons-material/Download';
+import SearchIcon from 'src/assets/table/Search.svg';
+import ArrowIcon from 'src/assets/table/Arrow.svg';
 import {
   Box,
   IconButton,
@@ -195,27 +195,41 @@ export default function CommissionListView() {
               <Stack direction="row" spacing={1} sx={{ justifyContent: { xs: 'flex-start', sm: 'flex-start' } }}>
                 <IconButton
                   sx={{
-                    width: { xs: 40, sm: 44 },
-                    height: { xs: 36, sm: 40 },
+                    width: 44,
+                    height: 40,
                     borderRadius: '12px',
                     bgcolor: '#03BC00',
                     color: '#FFFFFF',
                     '&:hover': { bgcolor: '#02A900' },
                   }}
                 >
-                  <SearchIcon fontSize="small" />
+                  <Box
+                    component="img"
+                    src={SearchIcon}
+                    sx={{
+                      width: 22,
+                      height: 22,
+                    }}
+                  />
                 </IconButton>
                 <IconButton
                   sx={{
-                    width: { xs: 40, sm: 44 },
-                    height: { xs: 36, sm: 40 },
+                    width: 44,
+                    height: 40,
                     borderRadius: '12px',
                     bgcolor: '#03BC00',
                     color: '#FFFFFF',
                     '&:hover': { bgcolor: '#02A900' },
                   }}
                 >
-                  <DownloadIcon fontSize="small" />
+                  <Box
+                    component="img"
+                    src={ArrowIcon}
+                    sx={{
+                      width: 20,
+                      height: 20,
+                    }}
+                  />
                 </IconButton>
               </Stack>
             </Box>

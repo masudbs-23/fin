@@ -1,5 +1,5 @@
-import SearchIcon from '@mui/icons-material/Search';
-import DownloadIcon from '@mui/icons-material/Download';
+import SearchIcon from 'src/assets/table/Search.svg';
+import ArrowIcon from 'src/assets/table/Arrow.svg';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -198,6 +198,7 @@ export default function CustomersListView() {
 
   const [filters, setFilters] = useState({
     ...defaultFilters,
+    country: '',
   });
   const [appliedFilters, setAppliedFilters] = useState({ ...defaultFilters });
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
@@ -247,7 +248,7 @@ export default function CustomersListView() {
 
   const inputSx = {
     '& .MuiOutlinedInput-root': {
-      height: 44,
+      height: 40,
       borderRadius: '8px',
       bgcolor: '#FFFFFF',
       '& fieldset': { borderColor: '#D0D5DD' },
@@ -496,11 +497,18 @@ export default function CustomersListView() {
                     '&:hover': { bgcolor: '#02A900' },
                   }}
                 >
-                  <SearchIcon />
+                  <Box
+                    component="img"
+                    src={SearchIcon}
+                    sx={{
+                      width: 22,
+                      height: 22,
+                    }}
+                  />
                 </IconButton>
                 <IconButton
                   sx={{
-                    width: 48,
+                    width: 44,
                     height: 40,
                     borderRadius: '12px',
                     bgcolor: '#03BC00',
@@ -508,7 +516,14 @@ export default function CustomersListView() {
                     '&:hover': { bgcolor: '#02A900' },
                   }}
                 >
-                  <DownloadIcon />
+                  <Box
+                    component="img"
+                    src={ArrowIcon}
+                    sx={{
+                      width: 20,
+                      height: 20,
+                    }}
+                  />
                 </IconButton>
               </Stack>
             </Grid>

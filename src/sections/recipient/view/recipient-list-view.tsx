@@ -1,5 +1,5 @@
-import SearchIcon from '@mui/icons-material/Search';
-import DownloadIcon from '@mui/icons-material/Download';
+import SearchIcon from 'src/assets/table/Search.svg';
+import ArrowIcon from 'src/assets/table/Arrow.svg';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import {
@@ -151,7 +151,7 @@ export default function RecipientListView() {
 
   const inputSx = {
     '& .MuiOutlinedInput-root': {
-      height: 44,
+      height: 40,
       borderRadius: '8px',
       bgcolor: '#FFFFFF',
       '& fieldset': { borderColor: '#D0D5DD' },
@@ -291,7 +291,14 @@ export default function RecipientListView() {
                   '&:hover': { bgcolor: '#02A900' },
                 }}
               >
-                <SearchIcon />
+                <Box
+                  component="img"
+                  src={SearchIcon}
+                  sx={{
+                    width: 22,
+                    height: 22,
+                  }}
+                />
               </IconButton>
               <IconButton
                 sx={{
@@ -303,7 +310,14 @@ export default function RecipientListView() {
                   '&:hover': { bgcolor: '#02A900' },
                 }}
               >
-                <DownloadIcon />
+                <Box
+                  component="img"
+                  src={ArrowIcon}
+                  sx={{
+                    width: 20,
+                    height: 20,
+                  }}
+                />
               </IconButton>
             </Stack>
           </Grid>

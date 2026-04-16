@@ -1,5 +1,5 @@
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from 'src/assets/table/Search.svg';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import {
   Box,
@@ -105,7 +105,7 @@ export default function CreateTransferListView() {
 
   const inputSx = {
     '& .MuiOutlinedInput-root': {
-      height: 44,
+      height: 40,
       borderRadius: '8px',
       bgcolor: '#FFFFFF',
       '& fieldset': { borderColor: '#D0D5DD' },
@@ -191,7 +191,14 @@ export default function CreateTransferListView() {
                 '&:hover': { bgcolor: '#02A900' },
               }}
             >
-              <SearchIcon fontSize="small" />
+              <Box
+                component="img"
+                src={SearchIcon}
+                sx={{
+                  width: 22,
+                  height: 22,
+                }}
+              />
             </IconButton>
           </Grid>
         </Grid>
